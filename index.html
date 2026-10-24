@@ -391,6 +391,27 @@
   nav .btn.navchats:hover{background:var(--ink);color:var(--bg);border-color:var(--ink)}
   @media (max-width:560px){ nav{gap:10px} nav .btn{padding:8px 12px} }
 
+  .gbtn{background:#fff !important;color:#1f1f1f !important;border:1px solid #dadce0 !important;gap:10px}
+  .gbtn:hover{background:#f6f8fc !important;border-color:#c6c9cf !important}
+  .gnote{margin-top:22px;max-width:620px;display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;border:1px solid var(--line-2);border-radius:10px;padding:14px 16px;background:var(--paper)}
+  .gnote div{display:grid;gap:2px}
+  .gnote span{color:var(--muted);font-size:14px}
+
+  /* phone menu */
+  .menu-btn{display:none;margin-left:auto;width:44px;height:44px;place-items:center;border:1px solid var(--line-2);border-radius:8px;background:var(--paper);color:var(--ink);cursor:pointer;-webkit-tap-highlight-color:transparent}
+  .menu-btn path{transition:transform .2s ease-out,opacity .2s;transform-origin:12px 12px}
+  header.menu-open .menu-btn .l1{transform:translateY(5px) rotate(45deg)}
+  header.menu-open .menu-btn .l2{opacity:0}
+  header.menu-open .menu-btn .l3{transform:translateY(-5px) rotate(-45deg)}
+  @media (max-width:760px){
+    .menu-btn{display:grid}
+    header nav{display:none;position:absolute;top:100%;left:0;right:0;margin:0;background:var(--bg);border-bottom:1px solid var(--line-2);box-shadow:0 14px 24px rgba(0,0,0,.08);flex-direction:column;align-items:stretch;gap:0;padding:6px 16px 16px}
+    header.menu-open nav{display:flex}
+    header nav > a:not(.btn), header nav > .navout{padding:14px 2px;font-size:17px;color:var(--ink);border-bottom:1px solid var(--line);text-align:left}
+    header nav > .btn{margin-top:10px;padding:14px;font-size:16px}
+    header nav > .hidden{display:none !important}
+  }
+
   .navout{border:0;background:transparent;cursor:pointer;font-weight:500;font-size:14px;color:var(--muted);padding:6px 0}
   .navout:hover{color:var(--ink)}
   .hidden{display:none !important}
@@ -414,11 +435,15 @@
 <header>
   <div class="wrap bar">
     <a class="logo" href="#/"><i></i><span id="logoName">freshhands</span></a>
-    <nav>
-      <a href="#/" class="hide-s">Browse</a>
+    <button class="menu-btn" id="menuBtn" type="button" aria-label="Menu" aria-expanded="false" aria-controls="mainNav">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path class="l1" d="M4 7h16"/><path class="l2" d="M4 12h16"/><path class="l3" d="M4 17h16"/></svg>
+    </button>
+    <nav id="mainNav">
+      <a href="#/">Browse</a>
       <a href="#/plans">Plans</a>
-      <a href="#/safety" class="hide-s">Safety</a>
+      <a href="#/safety">Safety</a>
       <a href="#/inbox" id="navMsg" class="btn ghost navchats hidden">My chats</a>
+      <button class="navout hidden" id="navIn" type="button">Log in</button>
       <a class="btn" href="#/plans" id="navJoin">Join</a>
       <button class="navout hidden" id="navOut" type="button">Log out</button>
     </nav>
@@ -493,6 +518,87 @@
       const local = new Set(LOCAL.map(p => p.id));
       PEOPLE = LOCAL.concat((rows || []).map(fromRow).filter(p => !local.has(p.id)));
     } catch (e) { console.warn("Could not load profiles", e); }
+  }
+
+  // ---------- accounts: Continue with Google (Supabase Auth, PKCE) ----------
+  const AUTHK = "freshhands:auth";
+  function getAuth() { try { return JSON.parse(localStorage.getItem(AUTHK) || "null"); } catch (e) { return null; } }
+  function setAuth(a) { try { a ? localStorage.setItem(AUTHK, JSON.stringify(a)) : localStorage.removeItem(AUTHK); } catch (e) {} updateNav(); }
+  const authBase = () => SB.url.replace(/\/$/, "") + "/auth/v1";
+  const b64url = buf => btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  async function googleLogin() {
+    if (location.protocol !== "https:") { toast("Google login works on the live site."); return; }
+    const verifier = b64url(crypto.getRandomValues(new Uint8Array(32)));
+    const challenge = b64url(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(verifier)));
+    try { localStorage.setItem("freshhands:pkce", verifier); localStorage.setItem("freshhands:back", location.hash || "#/"); } catch (e) {}
+    const redirect = location.origin + location.pathname;
+    location.href = `${authBase()}/authorize?provider=google&redirect_to=${encodeURIComponent(redirect)}&code_challenge=${challenge}&code_challenge_method=s256`;
+  }
+  function saveSession(r) {
+    const md = (r.user && r.user.user_metadata) || {};
+    setAuth({ access: r.access_token, refresh: r.refresh_token, exp: Date.now() + (r.expires_in || 3600) * 1000,
+      email: (r.user && r.user.email) || (getAuth() || {}).email || "", name: md.full_name || md.name || (getAuth() || {}).name || "" });
+  }
+  async function authToken() {
+    const a = getAuth(); if (!a) return null;
+    if (a.exp - Date.now() > 60000) return a.access;
+    try {
+      const r = await fetch(`${authBase()}/token?grant_type=refresh_token`, { method: "POST", headers: { apikey: SB.key, "Content-Type": "application/json" }, body: JSON.stringify({ refresh_token: a.refresh }) });
+      if (!r.ok) throw new Error("refresh");
+      const j = await r.json(); saveSession(j); return j.access_token;
+    } catch (e) { setAuth(null); return null; }
+  }
+  async function arpc(fn, args) {
+    const t = await authToken(); if (!t) throw new Error("Not signed in");
+    const r = await fetch(SB.url.replace(/\/$/, "") + "/rest/v1/rpc/" + fn, {
+      method: "POST", headers: { apikey: SB.key, Authorization: "Bearer " + t, "Content-Type": "application/json" }, body: JSON.stringify(args || {}) });
+    if (!r.ok) throw new Error(r.status + " " + (await r.text()).slice(0, 200));
+    return r.json().catch(() => null);
+  }
+  async function authInit() {
+    const qs = new URLSearchParams(location.search);
+    const code = qs.get("code"), failed = qs.get("error") || qs.get("error_description");
+    if (code || failed) {
+      let back = "#/"; try { back = localStorage.getItem("freshhands:back") || "#/"; } catch (e) {}
+      history.replaceState(null, "", location.pathname + back);
+      if (code) {
+        try {
+          let v = ""; try { v = localStorage.getItem("freshhands:pkce") || ""; } catch (e) {}
+          const r = await fetch(`${authBase()}/token?grant_type=pkce`, { method: "POST", headers: { apikey: SB.key, "Content-Type": "application/json" }, body: JSON.stringify({ auth_code: code, code_verifier: v }) });
+          if (!r.ok) throw new Error(await r.text());
+          saveSession(await r.json());
+          setTimeout(() => toast("Signed in with Google"), 400);
+        } catch (e) { console.warn(e); setTimeout(() => toast("Couldn't sign in. Try again."), 400); }
+      } else setTimeout(() => toast("Sign-in was cancelled."), 400);
+      try { localStorage.removeItem("freshhands:pkce"); } catch (e) {}
+    }
+    if (getAuth()) await syncAccount();
+  }
+  // Bring my profile key and my chats to this device, and save this device's ones to my account
+  async function syncAccount() {
+    try {
+      let me = await arpc("acct_me");
+      if (!me.profile && getMine() && getToken()) {
+        try { await arpc("acct_claim", { p_slug: getMine(), p_token: getToken() }); me = await arpc("acct_me"); } catch (e) { toast(errText(e)); }
+      }
+      if (me.profile) setMine(me.profile.slug, me.profile.token);
+      for (const t of myThreads().filter(t => t.role === "client")) arpc("acct_save_thread", { p_thread: t.id, p_token: t.token }).catch(() => {});
+      for (const t of me.threads || []) if (!myThreads().some(x => x.id === t.id)) saveThread({ ...t, role: "client" });
+    } catch (e) { console.warn("Account sync failed", e); }
+  }
+  async function signOut() {
+    const a = getAuth();
+    if (a) fetch(`${authBase()}/logout`, { method: "POST", headers: { apikey: SB.key, Authorization: "Bearer " + a.access } }).catch(() => {});
+    setAuth(null);
+  }
+  const G_LOGO = `<svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="m6.3 14.7 6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>`;
+  const googleBtn = () => `<button class="btn gbtn" type="button" data-google>${G_LOGO}<span>Continue with Google</span></button>`;
+  document.addEventListener("click", e => { if (e.target.closest("[data-google]")) { e.preventDefault(); googleLogin(); } });
+  function loginDialog() {
+    modal(`<h3>Log in</h3>
+      <p>Use your Google account. Your profile and chats will open on any device.</p>
+      <div class="modal-actions">${googleBtn()}<button class="btn ghost" data-close>Cancel</button></div>
+      <p class="note" style="margin-top:14px">We only get your name and email from Google. We never see your password.</p>`);
   }
   const app = document.getElementById("app");
 
@@ -937,6 +1043,8 @@
       <section class="wrap page-h">
         <h1>Join for free.</h1>
         <p>${DB ? "Tell us what you do. Your profile goes live the moment you press publish." : "Tell us what you do. We'll put you on the site in a day or two."}</p>
+        ${DB && !getAuth() ? `<div class="gnote"><div><b>Log in first (recommended)</b><span>Then your profile and chats work on any device.</span></div>${googleBtn()}</div>` : ""}
+        ${getAuth() ? `<p class="note" style="margin-top:10px">Signed in as ${esc(getAuth().email || getAuth().name)}</p>` : ""}
       </section>
       <section class="wrap">
         <form class="form" id="applyForm" novalidate>
@@ -1005,6 +1113,7 @@
         try {
           await db("profiles", { method: "POST", body: JSON.stringify(row), headers: { Prefer: "return=minimal" } });
           setMine(slug, row.owner_token);
+          if (getAuth()) await arpc("acct_claim", { p_slug: slug, p_token: row.owner_token }).catch(x => console.warn(x));
           await loadPeople();
           location.hash = "#/p/" + slug;
           setTimeout(() => toast("You're live! Share your profile link."), 300);
@@ -1116,6 +1225,7 @@
       try {
         const r = await rpc("chat_start", { p_slug: p.id, p_name: name, p_body: body });
         saveThread({ id: r.id, token: r.token, slug: p.id, with: p.name, role: "client", at: new Date().toISOString() });
+        if (getAuth()) arpc("acct_save_thread", { p_thread: r.id, p_token: r.token }).catch(() => {});
         m.remove(); location.hash = "#/chat/" + r.id;
       } catch (x) { btn.disabled = false; btn.textContent = "Send"; m.querySelector("#startErr").textContent = errText(x); }
     });
@@ -1514,6 +1624,30 @@
     return m;
   }
   function logoutDialog() {
+    if (getAuth()) {
+      const a = getAuth(), hasProfile = !!(getMine() && getToken());
+      const m = modal(`
+        <h3>Log out?</h3>
+        <p>You're signed in as <b>${esc(a.email || a.name || "Google user")}</b>. Your profile and chats stay saved. Log in again to get them back on any device.</p>
+        <div class="modal-actions">
+          <button class="btn" data-act="out">Log out</button>
+          ${hasProfile ? `<button class="btn danger" data-act="del">Delete my profile and log out</button>` : ""}
+          <button class="btn ghost" data-close>Cancel</button>
+        </div>`);
+      m.addEventListener("click", async e => {
+        const b = e.target.closest("[data-act]"); if (!b) return;
+        if (b.dataset.act === "del") {
+          if (!confirm("Delete your profile forever? This can't be undone.")) return;
+          b.disabled = true; b.textContent = "Deleting…";
+          try { if (!(await deleteMine())) throw new Error("no"); } catch (x) { b.disabled = false; b.textContent = "Delete my profile and log out"; toast("Couldn't delete. Try again."); return; }
+        }
+        await signOut();
+        setMine("");
+        try { localStorage.removeItem(THREADS); } catch (x) {}
+        m.remove(); toast("Logged out"); location.hash = "#/"; route();
+      });
+      return;
+    }
     const canDelete = !!getToken() && DB;
     const m = modal(canDelete ? `
       <h3>Log out?</h3>
@@ -1543,8 +1677,19 @@
     if (mine) { j.textContent = "My profile"; j.href = "#/p/" + encodeURIComponent(mine); o.classList.remove("hidden"); }
     else { j.textContent = "Join"; j.href = "#/plans"; o.classList.add("hidden"); }
     document.getElementById("navMsg").classList.toggle("hidden", !(DB && (mine || myThreads().length)));
+    const signed = !!getAuth();
+    document.getElementById("navIn").classList.toggle("hidden", !DB || signed || !!mine);
+    if (signed) o.classList.remove("hidden");
   }
   document.getElementById("navOut").addEventListener("click", logoutDialog);
+  // phone menu open / close
+  const hdr = document.querySelector("header"), menuBtn = document.getElementById("menuBtn");
+  const setMenu = on => { hdr.classList.toggle("menu-open", on); menuBtn.setAttribute("aria-expanded", on); };
+  menuBtn.addEventListener("click", e => { e.stopPropagation(); setMenu(!hdr.classList.contains("menu-open")); });
+  document.getElementById("mainNav").addEventListener("click", e => { if (e.target.closest("a,button")) setMenu(false); });
+  document.addEventListener("click", e => { if (!e.target.closest("header")) setMenu(false); });
+  window.addEventListener("hashchange", () => setMenu(false));
+  document.getElementById("navIn").addEventListener("click", loginDialog);
   updateNav();
 
   function route() {
@@ -1567,7 +1712,7 @@
   window.addEventListener("hashchange", route);
   if (DB) {
     app.innerHTML = `<section class="wrap page-h"><p>Loading…</p></section>`;
-    loadPeople().then(route);
+    authInit().catch(e => console.warn(e)).then(loadPeople).then(route);
   } else route();
 })();
 </script>
