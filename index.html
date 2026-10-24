@@ -427,6 +427,24 @@
   .langbtn:hover{border-color:var(--ink)}
   @media (max-width:760px){ header nav > .langbtn{margin-top:10px;padding:12px;font-size:15px} }
 
+  .beta{font:700 10px/1 var(--sans);font-style:normal;letter-spacing:.1em;color:var(--hot);border:1px solid currentColor;border-radius:4px;padding:3px 5px;margin-left:2px;align-self:center;transform:translateY(-1px)}
+
+  /* support / tips */
+  .support{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin-top:8px;padding-top:20px;padding-bottom:20px;border-top:1px solid var(--line)}
+  .support div{display:grid;gap:2px}
+  .support span{color:var(--muted);font-size:15px}
+  footer .support-link{color:var(--hot) !important;font-weight:600}
+
+  /* sponsor banner */
+  .ad.sponsor{display:grid;grid-template-columns:1fr;gap:0;padding:0;overflow:hidden;text-decoration:none;color:var(--ink);border:1px solid var(--line-2)}
+  .ad.sponsor img{width:100%;aspect-ratio:4/1;object-fit:cover;display:block;background:var(--line)}
+  .ad.sponsor .sp-text{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 14px}
+  .ad.sponsor .sp-text b{font-weight:600}
+  .ad.sponsor:hover .sp-text b{color:var(--hot)}
+  .ad .adlink{color:var(--muted) !important;font-weight:600 !important;text-decoration:none}
+  .ad .adlink:hover{color:var(--ink) !important}
+  .adplans{grid-template-columns:repeat(auto-fit,minmax(240px,1fr)) !important;max-width:720px}
+
   /* settings */
   .navset{display:inline-flex;align-items:center;gap:6px}
   @media (min-width:761px){ .navset span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)} }
@@ -465,7 +483,7 @@
 <body>
 <header>
   <div class="wrap bar">
-    <a class="logo" href="#/"><i></i><span id="logoName">freshhands</span></a>
+    <a class="logo" href="#/"><i></i><span id="logoName">freshhands</span><em class="beta" translate="no" title="The site is new. Things may change.">BETA</em></a>
     <button class="menu-btn" id="menuBtn" type="button" aria-label="Menu" aria-expanded="false" aria-controls="mainNav">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path class="l1" d="M4 7h16"/><path class="l2" d="M4 12h16"/><path class="l3" d="M4 17h16"/></svg>
     </button>
@@ -493,6 +511,8 @@
       <a href="#/plans">Plans</a>
       <a href="#/safety">Safety</a>
       <a href="#/terms">Terms &amp; refunds</a>
+      <a href="#/advertise">Advertise</a>
+      <a href="#" id="supportLink" class="support-link hidden" target="_blank" rel="noopener">Support us</a>
     </nav>
   </div>
 </footer>
@@ -778,11 +798,23 @@
   const toast = t => { const el = document.getElementById("toast"); el.textContent = t; el.classList.add("on"); clearTimeout(toast.id); toast.id = setTimeout(() => el.classList.remove("on"), 2200); };
 
   document.getElementById("logoName").textContent = SITE.name || "freshhands";
+  if (safeUrl(SITE.supportUrl)) { const sl = document.getElementById("supportLink"); sl.href = safeUrl(SITE.supportUrl); sl.classList.remove("hidden"); }
   document.getElementById("footName").textContent = `© ${new Date().getFullYear()} ${SITE.name || "freshhands"}`;
 
   // ---------- ads (rare) ----------
   let adsLoaded = false;
+  // Direct sponsor from data.js wins; it stops showing after its "until" date
+  function sponsorOn() {
+    const s = SITE.sponsor || {};
+    if (!safeUrl(s.image) || !safeUrl(s.link)) return null;
+    if (s.until && new Date(s.until + "T23:59:59") < new Date()) return null;
+    return s;
+  }
   function adHTML() {
+    const s = sponsorOn();
+    if (s) return `<a class="ad sponsor" href="${esc(safeUrl(s.link))}" target="_blank" rel="noopener sponsored">
+        <img src="${esc(safeUrl(s.image))}" alt="${esc(s.name || "Sponsor")}" loading="lazy">
+        <span class="sp-text">${s.text ? `<b translate="no">${esc(s.text)}</b>` : ""}<span class="mono">Sponsored${s.name ? " · <span translate='no'>" + esc(s.name) + "</span>" : ""}</span></span></a>`;
     const a = SITE.ads || {};
     if (a.adsenseClient && a.adsenseSlot) {
       if (!adsLoaded) {
@@ -796,7 +828,35 @@
         <ins class="adsbygoogle" style="display:block" data-ad-client="${esc(a.adsenseClient)}" data-ad-slot="${esc(a.adsenseSlot)}" data-ad-format="auto" data-full-width-responsive="true"></ins></div>`;
     }
     // Until AdSense is on, the slot promotes our own plans.
-    return `<div class="ad"><span>Want to be seen first? <a href="#/plans">Get featured for €5 a year →</a></span><span class="mono">Ad</span></div>`;
+    return `<div class="ad"><span>Want to be seen first? <a href="#/plans">Get featured for €5 a year →</a></span><a class="mono adlink" href="#/advertise">Advertise here</a></div>`;
+  }
+
+  // ---------- Advertise page ----------
+  function advertise() {
+    const pr = SITE.adPrices || {}, mail = SITE.reportEmail || (SITE.owner || {}).email || "";
+    const subject = encodeURIComponent("Advertising on " + (SITE.name || "freshhands"));
+    const body = encodeURIComponent("Hi! I'd like to advertise.\n\nBrand / name:\nWebsite or link:\nHow long (week / month):\nStart date:\n");
+    app.innerHTML = `
+      <section class="wrap page-h">
+        <h1>Advertise here.</h1>
+        <p>Show your brand, channel or service to people who hire and do freelance work. Simple banner, fair price, no tracking.</p>
+      </section>
+      <section class="wrap">
+        <div class="plans adplans">
+          <div class="plan"><h3>1 week</h3><div class="amt">€${esc(pr.week ?? 5)}</div><ul><li>Your banner in the freelancer list</li><li>On free profiles</li><li>Link to your site</li></ul></div>
+          <div class="plan pro"><span class="tagp">Best value</span><h3>1 month</h3><div class="amt">€${esc(pr.month ?? 15)}</div><ul><li>Everything in 1 week</li><li>4 weeks for the price of 3</li><li>Change your banner once</li></ul></div>
+        </div>
+        <div class="set-block" style="max-width:720px">
+          <h2>How it works</h2>
+          <ul class="paylist">
+            <li>Email us your brand, link and dates.</li>
+            <li>Send a wide image (about 1200×300) and one short line of text.</li>
+            <li>We check it, you pay, and your banner goes live.</li>
+          </ul>
+          <p class="note">We don't run ads for adult content, gambling, crypto schemes, weapons, vapes, or anything not OK for teens.</p>
+          <div class="set-row">${mail ? `<a class="btn hot" href="mailto:${esc(mail)}?subject=${subject}&body=${body}">Email us to advertise</a>` : `<span class="note">Contact coming soon.</span>`}</div>
+        </div>
+      </section>`;
   }
   function fillAds() {
     if (!(SITE.ads && SITE.ads.adsenseClient)) return;
@@ -843,7 +903,11 @@
       <section class="wrap band">
         <h2>Offer your skills to clients.</h2>
         <a class="btn hot" href="#/apply">Create a free profile</a>
-      </section>`;
+      </section>
+      ${safeUrl(SITE.supportUrl) ? `<section class="wrap support">
+        <div><b>Like freshhands?</b><span>It's free, with no commission. A small tip helps keep it running.</span></div>
+        <a class="btn ghost" href="${esc(safeUrl(SITE.supportUrl))}" target="_blank" rel="noopener">Support us</a>
+      </section>` : ""}`;
     const q = document.getElementById("q");
     q.addEventListener("input", () => { state.q = q.value; results(); });
     document.getElementById("cats").addEventListener("click", e => {
@@ -892,6 +956,8 @@
         </a>`;
         if ((i + 1) % every === 0 && i < rest.length - 1) html += adHTML();
       });
+      // few people yet: still show a paid sponsor once, under the list
+      if (rest.length < every && sponsorOn()) html += adHTML();
     }
     html += `</div>`;
     document.getElementById("results").innerHTML = html;
@@ -1930,6 +1996,7 @@
     if (page === "chat" && arg) { chatPage(decodeURIComponent(arg), h.split("/")[2] || ""); window.scrollTo(0, 0); return; }
     if (page === "inbox") { inboxPage(); window.scrollTo(0, 0); return; }
     if (page === "settings") { settingsPage(); window.scrollTo(0, 0); return; }
+    if (page === "advertise") { advertise(); window.scrollTo(0, 0); return; }
     if (page === "me" && arg) { setMine(decodeURIComponent(arg)); location.replace("#/p/" + arg); return; }
     if (page === "p" && arg) profile(decodeURIComponent(arg));
     else if (page === "plans") plans();
@@ -2054,6 +2121,16 @@
     "Couldn't load your profile on this device.": "Не получилось загрузить профиль на этом устройстве.",
     "Please fill in name, what you do, service and price.": "Заполни имя, чем занимаешься, услугу и цену.", "Couldn't save. Check your answers and try again.": "Не получилось сохранить. Проверь ответы и попробуй снова.",
     "Forest": "Лес", "Ink (dark)": "Чернила (тёмная)", "Cobalt": "Кобальт", "Clay": "Глина",
+    "Advertise": "Реклама", "Advertise here": "Реклама у нас", "Advertise here.": "Реклама у нас.", "Sponsored": "Реклама",
+    "Show your brand, channel or service to people who hire and do freelance work. Simple banner, fair price, no tracking.": "Покажи свой бренд, канал или услугу людям, которые заказывают и делают фриланс. Простой баннер, честная цена, без слежки.",
+    "1 week": "1 неделя", "1 month": "1 месяц", "Best value": "Выгоднее", "Your banner in the freelancer list": "Твой баннер в списке фрилансеров",
+    "On free profiles": "На бесплатных профилях", "Link to your site": "Ссылка на твой сайт", "Everything in 1 week": "Всё из «1 неделя»",
+    "4 weeks for the price of 3": "4 недели по цене 3", "Change your banner once": "Можно один раз поменять баннер", "How it works": "Как это работает",
+    "Email us your brand, link and dates.": "Напиши нам бренд, ссылку и даты.", "Send a wide image (about 1200×300) and one short line of text.": "Пришли широкую картинку (примерно 1200×300) и одну короткую строку текста.",
+    "We check it, you pay, and your banner goes live.": "Мы проверяем, ты платишь, и баннер появляется на сайте.",
+    "We don't run ads for adult content, gambling, crypto schemes, weapons, vapes, or anything not OK for teens.": "Мы не берём рекламу 18+, казино, крипто-схем, оружия, вейпов и всего, что не подходит подросткам.",
+    "Email us to advertise": "Написать нам о рекламе", "Contact coming soon.": "Контакт скоро появится.",
+    "Support us": "Поддержать нас", "The site is new. Things may change.": "Сайт новый. Что-то может меняться.", "Like freshhands?": "Нравится freshhands?", "It's free, with no commission. A small tip helps keep it running.": "Сайт бесплатный и без комиссии. Небольшой донат помогает ему работать.",
   };
   const RX = [
     [/^(\d+) found$/, m => `Найдено: ${m[1]}`], [/^(\d+) selected$/, m => `Выбрано: ${m[1]}`],
