@@ -216,6 +216,8 @@
   .form .group{border:1.5px dashed var(--line);border-radius:4px;padding:16px;display:grid;gap:18px}
   .form .group legend{font-weight:500;font-size:15px;padding:0 6px}
   .form .lead{font-size:14px;color:var(--muted)}
+  .form .lead svg{vertical-align:-4px;margin-right:4px}
+  .form .lead b{color:var(--ink)}
 
   /* text pages */
   .text{max-width:68ch;padding-bottom:24px}
@@ -337,7 +339,7 @@
   .msg.them{align-self:flex-start;background:var(--paper);border:1px solid var(--line);border-bottom-left-radius:4px}
   .msg.sys{align-self:center;text-align:center;background:transparent;color:var(--muted);font-size:13px;max-width:440px}
   .chat-bar{position:sticky;bottom:0;background:var(--bg);padding:12px 0 16px;border-top:1px solid var(--line);display:grid;gap:10px}
-  .chat-bar #upBtn{justify-self:start}
+  .chat-bar .chat-tools{justify-self:start}
   .chat-form{display:flex;gap:8px;align-items:flex-end}
   .chat-form textarea{flex:1;min-width:0;resize:none;font:400 16px/1.4 var(--sans);color:var(--ink);background:var(--paper);border:1px solid var(--line-2);border-radius:10px;padding:12px 14px;outline:none}
   .chat-form textarea:focus{border-color:var(--ink)}
@@ -354,7 +356,16 @@
   .guarded{position:relative;cursor:zoom-in;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
   .guarded img{pointer-events:none;-webkit-user-drag:none;user-select:none;transition:filter .15s}
   .guarded::after{content:"";position:absolute;inset:0;background:transparent}
-  body.shielded .guarded img{filter:blur(24px) grayscale(.6)}
+  body.shielded .guarded img,body.shielded .guarded video{filter:blur(24px) grayscale(.6)}
+  .guarded video{display:block;width:100%;max-height:70vh;background:#000;transition:filter .15s}
+  .viewer.vid{position:relative;cursor:default}
+  .viewer .wm{position:absolute;inset:0;pointer-events:none;display:flex;flex-wrap:wrap;align-content:space-around;justify-content:space-around;gap:20px;overflow:hidden;transform:rotate(-18deg) scale(1.3)}
+  .viewer .wm span{color:rgba(255,255,255,.35);text-shadow:0 1px 1px rgba(0,0,0,.35);font:600 15px/1 var(--sans);white-space:nowrap}
+  .viewer.vid::after{bottom:48px}
+  .chat-tools{display:flex;gap:8px;flex-wrap:wrap}
+  .chat-tools .btn{padding:9px 14px;font-size:14px}
+  .dcard.viewonly.mine{align-self:flex-end}
+  .dcard.viewonly .dshot{min-height:120px}
   body.shielded .guarded::before{content:"Preview hidden";position:absolute;inset:0;display:grid;place-items:center;z-index:2;font:600 14px/1 var(--sans);color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.6)}
   .viewer{border-radius:8px;overflow:hidden;background:var(--line);cursor:default}
   .viewer img{display:block;width:100%;height:auto;max-height:70vh;object-fit:contain}
@@ -412,6 +423,10 @@
     header nav > .hidden{display:none !important}
   }
 
+  .langbtn{border:1px solid var(--line-2);background:var(--paper);color:var(--ink);border-radius:6px;padding:7px 10px;font:600 13px/1 var(--sans);letter-spacing:.04em;cursor:pointer}
+  .langbtn:hover{border-color:var(--ink)}
+  @media (max-width:760px){ header nav > .langbtn{margin-top:10px;padding:12px;font-size:15px} }
+
   .navout{border:0;background:transparent;cursor:pointer;font-weight:500;font-size:14px;color:var(--muted);padding:6px 0}
   .navout:hover{color:var(--ink)}
   .hidden{display:none !important}
@@ -446,6 +461,7 @@
       <button class="navout hidden" id="navIn" type="button">Log in</button>
       <a class="btn" href="#/plans" id="navJoin">Join</a>
       <button class="navout hidden" id="navOut" type="button">Log out</button>
+      <button class="langbtn" id="langBtn" type="button" translate="no" aria-label="Language">RU</button>
     </nav>
   </div>
 </header>
@@ -527,7 +543,12 @@
   const authBase = () => SB.url.replace(/\/$/, "") + "/auth/v1";
   const b64url = buf => btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
   async function googleLogin() {
-    if (location.protocol !== "https:") { toast("Google login works on the live site."); return; }
+    if (location.protocol !== "https:") {
+      const live = safeUrl(SITE.liveUrl) || "https://jenyatank.github.io/freshhands/";
+      toast("Opening the live site…");
+      setTimeout(() => { location.href = live + (location.hash || "#/"); }, 700);
+      return;
+    }
     const verifier = b64url(crypto.getRandomValues(new Uint8Array(32)));
     const challenge = b64url(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(verifier)));
     try { localStorage.setItem("freshhands:pkce", verifier); localStorage.setItem("freshhands:back", location.hash || "#/"); } catch (e) {}
@@ -1049,8 +1070,10 @@
       <section class="wrap">
         <form class="form" id="applyForm" novalidate>
           <p class="lead">Everything is required unless it says <em class="opt" style="margin:0">optional</em>.</p>
-          <label>Your name or nickname<input name="name" required maxlength="40" autocomplete="nickname"></label>
-          <label>Email<input name="email" type="email" required maxlength="80" autocomplete="email"><small>Only we see it.</small></label>
+          <label>Your name or nickname<input name="name" required maxlength="40" autocomplete="nickname" value="${esc(((getAuth() || {}).name || "").slice(0, 40))}"></label>
+          ${getAuth() && getAuth().email
+            ? `<input type="hidden" name="email" value="${esc(getAuth().email)}"><p class="lead">${G_LOGO} Using your Google email <b>${esc(getAuth().email)}</b>. Only we see it.</p>`
+            : `<label>Email<input name="email" type="email" required maxlength="80" autocomplete="email"><small>Only we see it.</small></label>`}
           <label>What do you do?
             <input name="category" list="catList" required maxlength="30" placeholder="Pick from the list or type your own" autocomplete="off">
             <datalist id="catList">${CATS.filter(c => c[0] !== "other").map(([, n]) => `<option value="${n}"></option>`).join("")}</datalist>
@@ -1249,7 +1272,10 @@
         <div class="chat-bar">
           <div class="selbar hidden" id="selBar"><span id="selCount">0 selected</span><button class="btn ghost" id="selCopy" type="button">Copy</button><button class="btn danger" id="selDel" type="button">Delete</button><button class="btn ghost" id="selCancel" type="button">Cancel</button></div>
           <div class="replybar hidden" id="replyBar"><div><b>Reply</b><span id="replyText"></span></div><button type="button" id="replyX" aria-label="Cancel reply">×</button></div>
-          <button class="btn ghost hidden" id="upBtn" type="button">Upload work</button>
+          <div class="chat-tools">
+            <button class="btn ghost" id="attBtn" type="button"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M21 11.5 12.5 20a5 5 0 0 1-7-7L14 4.5a3.5 3.5 0 0 1 5 5L10.5 18a2 2 0 0 1-3-3L15 7.5"/></svg>Send file to view</button>
+            <button class="btn ghost hidden" id="upBtn" type="button">Upload work</button>
+          </div>
           <form class="chat-form" id="chatForm">
             <textarea id="chatIn" rows="1" maxlength="2000" placeholder="Write a message…" aria-label="Message"></textarea>
             <button class="btn hot" type="submit">Send</button>
@@ -1278,6 +1304,7 @@
           try { await navigator.clipboard.writeText(link); toast("Link copied. Keep it private: anyone with it can read this chat."); } catch (e) { prompt("Copy this link:", link); }
         });
         if (r.role === "freelancer") { const ub = document.getElementById("upBtn"); ub.classList.remove("hidden"); ub.addEventListener("click", () => deliverDialog(S, () => load(false))); }
+        document.getElementById("attBtn").addEventListener("click", () => attachDialog(S, () => load(false)));
       }
       let changed = false;
       if (JSON.stringify(r.messages) !== JSON.stringify(S.msgs)) { S.msgs = r.messages; changed = true; }
@@ -1291,6 +1318,17 @@
 
     function deliveryCard(d) {
       const prev = S.previews[d.id];
+      if (d.kind === "view") {
+        const isVid = String(d.mime).startsWith("video/");
+        const fromMe = d.sender === S.role;
+        const who = fromMe ? "You" : (d.sender === "client" ? S.info.client_name : S.info.freelancer);
+        return `<div class="dcard viewonly ${fromMe ? "mine" : ""}">
+          <div class="dshot guarded" data-view="${d.id}" title="Click to view">${prev ? `<img src="${esc(prev)}" alt="" draggable="false">` : `<span>${isVid ? "VIDEO" : "IMAGE"}</span>`}
+            <i class="lock">View only</i></div>
+          <div class="dbody"><b translate="no">${esc(d.name)}</b><span class="note">${esc(who)} · ${fmtSize(d.size)} · can't be downloaded</span>
+            <button class="btn ghost" data-view="${d.id}">${isVid ? "Play" : "View"}</button></div>
+        </div>`;
+      }
       const ext = (d.name.split(".").pop() || "file").slice(0, 5).toUpperCase();
       const price = "€" + Number(d.price).toFixed(Number(d.price) % 1 ? 2 : 0);
       let actions = "";
@@ -1331,10 +1369,30 @@
 
     log.addEventListener("click", async e => {
       const view = e.target.closest("[data-view]");
+      const vd = view && S.dels.find(x => x.id === view.dataset.view);
+      if (vd && vd.kind === "view" && String(vd.mime).startsWith("video/")) {
+        const me = S.role === "client" ? S.info.client_name : S.info.freelancer;
+        const md = modal(`<div class="viewer guarded vid"><p class="note" style="padding:40px;text-align:center">Loading…</p></div>
+          <p class="note" style="margin:12px 0">View only. It can't be downloaded.</p>
+          <div class="modal-actions"><button class="btn ghost" data-close>Close</button></div>`);
+        md.querySelector(".modal-box").classList.add("wide");
+        try {
+          const f = await rpc("chat_media", { p_thread: id, p_token: token, p_delivery: vd.id });
+          const bin = atob(f.data), arr = new Uint8Array(bin.length);
+          for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+          const url = URL.createObjectURL(new Blob([arr], { type: f.mime }));
+          const box = md.querySelector(".viewer");
+          box.innerHTML = `<video src="${url}" controls playsinline controlsList="nodownload noplaybackrate noremoteplayback" disablePictureInPicture disableRemotePlayback></video>
+            <div class="wm" aria-hidden="true">${Array(18).fill(`<span>freshhands · ${esc(me)}</span>`).join("")}</div>`;
+          const obs = new MutationObserver(() => { if (!document.body.contains(md)) { URL.revokeObjectURL(url); obs.disconnect(); } });
+          obs.observe(document.body, { childList: true });
+        } catch (x) { md.querySelector(".viewer").innerHTML = `<p class="note" style="padding:40px;text-align:center">Couldn't load the video.</p>`; }
+        return;
+      }
       if (view && S.previews[view.dataset.view]) {
         const d = S.dels.find(x => x.id === view.dataset.view);
         modal(`<div class="viewer guarded"><img src="${esc(S.previews[view.dataset.view])}" alt="Preview" draggable="false"></div>
-          <p class="note" style="margin:12px 0">Preview only. ${d && d.status === "unlocked" ? "Download the full file from the chat." : "The full file unlocks after payment."}</p>
+          <p class="note" style="margin:12px 0">${d && d.kind === "view" ? "View only. It can't be downloaded." : `Preview only. ${d && d.status === "unlocked" ? "Download the full file from the chat." : "The full file unlocks after payment."}`}</p>
           <div class="modal-actions"><button class="btn ghost" data-close>Close</button></div>`).querySelector(".modal-box").classList.add("wide");
         return;
       }
@@ -1496,6 +1554,39 @@
     document.addEventListener("dragstart", e => { if (e.target.closest(".guarded")) e.preventDefault(); });
   })();
 
+  // Anyone in the chat: send an image or video that the other person can only view
+  function attachDialog(S, done) {
+    const other = S.role === "client" ? S.info.freelancer : S.info.client_name;
+    const m = modal(`
+      <h3>Send a file to view</h3>
+      <p>${esc(other)} can only look at it in the chat. It can't be downloaded, and images get a watermark with their name.</p>
+      <form class="form" id="attForm" style="margin-top:0">
+        <label>Image or video <em class="opt">max 5 MB</em><input type="file" name="file" accept="image/*,video/*" required></label>
+        <p class="note">Want to get paid for a file? ${S.role === "freelancer" ? "Use <b>Upload work</b> instead." : "Ask the freelancer to use Upload work."}</p>
+        <p class="err" id="attErr"></p>
+        <div class="modal-actions"><button class="btn hot" type="submit">Send</button><button class="btn ghost" type="button" data-close>Cancel</button></div>
+      </form>`);
+    m.querySelector("#attForm").addEventListener("submit", async e => {
+      e.preventDefault();
+      const f = e.target, file = f.file.files[0], err = m.querySelector("#attErr"), btn = f.querySelector("[type=submit]");
+      if (!file) { err.textContent = "Choose a file."; return; }
+      if (!/^(image|video)\//.test(file.type)) { err.textContent = "Only images and videos."; return; }
+      if (file.size > 5 * 1024 * 1024) { err.textContent = "File is too big. Max 5 MB."; return; }
+      btn.disabled = true; btn.textContent = "Sending…";
+      try {
+        let data = null, preview = null;
+        if (file.type.startsWith("image/")) {
+          preview = await watermark(file, { max: 1400, quality: 0.72, text: "freshhands · for " + other });
+          if (!preview) throw new Error("Couldn't read this image.");
+        } else {
+          data = await new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(String(r.result).split(",")[1] || ""); r.onerror = rej; r.readAsDataURL(file); });
+        }
+        await rpc("chat_attach", { p_thread: S.id, p_token: S.token, p_name: file.name, p_mime: file.type, p_size: file.size, p_data: data, p_preview: preview });
+        m.remove(); toast("Sent"); done();
+      } catch (x) { btn.disabled = false; btn.textContent = "Send"; err.textContent = errText(x); }
+    });
+  }
+
   // Freelancer uploads finished work
   function deliverDialog(S, done) {
     let lastLink = ""; try { lastLink = localStorage.getItem("freshhands:paylink") || ""; } catch (e) {}
@@ -1529,21 +1620,23 @@
   }
 
   // Small preview with a strong watermark so it can't be used instead of the real file
-  async function watermark(file) {
+  async function watermark(file, opt = {}) {
+    const text = opt.text || "freshhands preview";
     try {
       const img = await createImageBitmap(file);
-      const s = Math.min(1, 720 / Math.max(img.width, img.height));
+      const s = Math.min(1, (opt.max || 720) / Math.max(img.width, img.height));
       const c = document.createElement("canvas"); c.width = Math.round(img.width * s); c.height = Math.round(img.height * s);
       const x = c.getContext("2d"); x.drawImage(img, 0, 0, c.width, c.height);
       x.save(); x.translate(c.width / 2, c.height / 2); x.rotate(-Math.PI / 6);
-      x.font = `600 ${Math.max(16, Math.round(c.width / 16))}px "Instrument Sans", sans-serif`; x.textAlign = "center";
+      x.font = `600 ${Math.max(16, Math.round(c.width / (opt.text ? 26 : 16)))}px "Instrument Sans", sans-serif`; x.textAlign = "center";
       const step = Math.max(40, Math.round(c.width / 7));
-      for (let yy = -c.height; yy < c.height; yy += step) for (let xx = -c.width; xx < c.width; xx += step * 4) {
-        x.fillStyle = "rgba(255,255,255,.5)"; x.fillText("freshhands preview", xx, yy);
-        x.fillStyle = "rgba(0,0,0,.25)"; x.fillText("freshhands preview", xx + 1, yy + 1);
+      const gap = x.measureText(text).width + step;
+      for (let yy = -c.height; yy < c.height; yy += step) for (let xx = -c.width; xx < c.width; xx += gap) {
+        x.fillStyle = "rgba(255,255,255,.5)"; x.fillText(text, xx, yy);
+        x.fillStyle = "rgba(0,0,0,.25)"; x.fillText(text, xx + 1, yy + 1);
       }
       x.restore();
-      return c.toDataURL("image/jpeg", 0.55);
+      return c.toDataURL("image/jpeg", opt.quality || 0.55);
     } catch (e) { return null; }
   }
 
@@ -1714,6 +1807,137 @@
     app.innerHTML = `<section class="wrap page-h"><p>Loading…</p></section>`;
     authInit().catch(e => console.warn(e)).then(loadPeople).then(route);
   } else route();
+})();
+</script>
+<script>
+// ===== Language: English by default, Russian on request. Only the site's own words are translated, never what people write. =====
+(() => {
+  let lang = "en"; try { lang = localStorage.getItem("freshhands:lang") || "en"; } catch (e) {}
+  const btn = document.getElementById("langBtn");
+  btn.textContent = lang === "ru" ? "EN" : "RU";
+  btn.addEventListener("click", () => { try { localStorage.setItem("freshhands:lang", lang === "ru" ? "en" : "ru"); } catch (e) {} location.reload(); });
+  if (lang !== "ru") return;
+  document.documentElement.lang = "ru";
+
+  const RU = {
+    "Browse": "Обзор", "Plans": "Тарифы", "Safety": "Безопасность", "My chats": "Мои чаты", "Log in": "Войти", "Join": "Присоединиться",
+    "Log out": "Выйти", "My profile": "Мой профиль", "Terms & refunds": "Условия и возвраты", "Theme": "Тема",
+    "Hire a freelancer. Get it done": "Найми фрилансера. Сделай всё", "this week.": "за неделю.", "this week.": "за неделю.",
+    "Logo, TikTok edit, Roblox map…": "Логотип, монтаж TikTok, карта Roblox…", "Search freelancers": "Поиск фрилансеров",
+    "Pick from the list or type your own": "Выбери из списка или напиши своё", "Logos and banners for small brands": "Логотипы и баннеры для небольших брендов",
+    "A few words about you and your work.": "Пара слов о тебе и твоих работах.", "Menu": "Меню", "Language": "Язык",
+    "People who design, edit, build and translate: beginners, students and pros. Pick one, message them, done. No fees.": "Люди, которые делают дизайн, монтаж, сайты и переводы: новички, студенты и профи. Выбери, напиши, готово. Без комиссий.",
+    "just opened": "только открылись", "New": "Новое", "categories": "категорий", "commission": "комиссия", "freelancers": "фрилансеров",
+    "All": "Все", "Design": "Дизайн", "Video editing": "Видеомонтаж", "Websites": "Сайты", "Game dev & 3D": "Игры и 3D", "Music & audio": "Музыка и звук",
+    "Writing": "Тексты", "Translation": "Переводы", "Tutoring": "Репетиторство", "Other": "Другое",
+    "Everyone": "Все", "Featured": "Рекомендуемые", "Ultra members": "Участники Ultra", "That's everyone for now.": "Пока это все.",
+    "No matches. Try another word or category.": "Ничего не нашлось. Попробуй другое слово или категорию.",
+    "No exact match. Showing the closest ones.": "Точных совпадений нет. Показываем похожие.",
+    "We're adding our first freelancers.": "Мы добавляем первых фрилансеров.", "Create a free profile now and be among the first clients see.": "Создай бесплатный профиль сейчас и будь среди первых, кого увидят клиенты.",
+    "Create a free profile": "Создать бесплатный профиль", "Offer your skills to clients.": "Предложи свои навыки клиентам.",
+    "Find someone": "Найди человека", "Search by skill or category and look at their work.": "Ищи по навыку или категории и смотри работы.",
+    "Message them directly": "Напиши напрямую", "Agree on the task, price and deadline in your own chat.": "Договорись о задаче, цене и сроке в чате.",
+    "Pay them, not us": "Плати им, а не нам", "The full amount goes to the freelancer. We take no commission.": "Вся сумма идёт фрилансеру. Мы не берём комиссию.",
+    "from": "от", "FROM": "ОТ", "Available": "Свободен",
+    "Want to be seen first?": "Хочешь, чтобы тебя видели первым?", "Get featured for €5 a year →": "Попади в рекомендуемые за €5 в год →", "Ad": "Реклама",
+    "← All freelancers": "← Все фрилансеры", "Replies": "Отвечает", "Languages": "Языки", "Member since": "С нами с",
+    "Portfolio": "Портфолио", "view portfolio": "смотреть портфолио", "Best work": "Лучшая работа", "More work": "Другие работы", "Work": "Работы",
+    "Save story card": "Сохранить карточку для сторис", "Contact details coming soon.": "Контакты скоро появятся.",
+    "Agree on the price and deadline before starting. For new clients, pay half first and half when it's done.": "Договоритесь о цене и сроке до начала. С новыми клиентами: половина сразу, половина после сдачи.",
+    "Report this profile": "Пожаловаться на профиль", "This is your profile": "Это твой профиль", "Delete my profile": "Удалить мой профиль",
+    "Message on Telegram": "Написать в Telegram",
+    "Put yourself out there.": "Заяви о себе.", "Clients use the site for free. Freelancers start free and upgrade to be seen first.": "Клиенты пользуются сайтом бесплатно. Фрилансеры начинают бесплатно и поднимают тариф, чтобы их видели первыми.",
+    "free forever": "бесплатно навсегда", "/ year": "/ год", "Most picked": "Чаще выбирают", "Join for free": "Присоединиться бесплатно", "Opening soon": "Скоро",
+    "Get on the site": "Твой профиль на сайте", "Show a bit of your work": "Немного твоих работ", "No ads on your page": "Без рекламы на твоей странице",
+    "Your own color": "Свой цвет", "Show more of your work": "Больше твоих работ", "Shown before Free and Basic": "Показываешься выше Free и Basic",
+    "PRO badge on your profile": "Значок PRO в профиле", "“Available for work” status": "Статус «Свободен для работы»", "Profile card for social media": "Карточка профиля для соцсетей",
+    "Featured on the home page": "В рекомендуемых на главной", "Large preview of your best work": "Большое превью лучшей работы", "Branded profile header": "Фирменная шапка профиля", "Everything in Pro": "Всё из Pro",
+    "Start free. Upgrade when you want. Cancel any time.": "Начни бесплатно. Повышай тариф, когда захочешь. Отменить можно в любой момент.",
+    "Create your free profile first, then come back here to upgrade it.": "Сначала создай бесплатный профиль, потом возвращайся сюда, чтобы повысить тариф.",
+    "Every plan costs less than €0.50 a month.": "Любой тариф дешевле €0.50 в месяц.", "Billed once a year. No hidden fees, no commission on your work.": "Оплата раз в год. Без скрытых платежей и без комиссии с твоей работы.",
+    "Join for free.": "Присоединяйся бесплатно.", "Tell us what you do. Your profile goes live the moment you press publish.": "Расскажи, чем занимаешься. Профиль появится на сайте сразу после публикации.",
+    "Log in first (recommended)": "Сначала войди (советуем)", "Then your profile and chats work on any device.": "Тогда профиль и чаты будут работать на любом устройстве.",
+    "Continue with Google": "Продолжить с Google",
+    "Everything is required unless it says": "Всё обязательно, кроме полей с пометкой", "optional": "необязательно", "fill at least one": "заполни хотя бы одно", "max 5 MB": "до 5 МБ",
+    "Your name or nickname": "Имя или ник", "Email": "Email", "Only we see it.": "Его видим только мы.", "What do you do?": "Чем ты занимаешься?",
+    "For example: Design, Video editing, or your own like \"Nail art\".": "Например: Дизайн, Видеомонтаж или своё, например «Маникюр».",
+    "One line about your service": "Одной строкой о твоей услуге", "About you": "О себе", "Skills": "Навыки", "Separate with commas.": "Через запятую.",
+    "Price from (€)": "Цена от (€)", "You reply": "Ты отвечаешь", "within an hour": "в течение часа", "same day": "в тот же день", "in 1–2 days": "за 1–2 дня",
+    "Links to your work": "Ссылки на работы", "One link per line.": "Одна ссылка на строку.", "How clients reach you": "Как клиенты с тобой свяжутся",
+    "I'm 13 or older. If I'm under 18, a parent knows I'm doing this.": "Мне 13 или больше. Если мне меньше 18, родитель в курсе.",
+    "Publish my profile": "Опубликовать профиль", "Publishing…": "Публикуем…", "Send application": "Отправить заявку",
+    "Using your Google email": "Используется твой Google email", ". Only we see it.": ". Его видим только мы.",
+    "You already have a profile.": "У тебя уже есть профиль.", "Open my profile": "Открыть мой профиль", "Upgrade": "Повысить тариф",
+    "Stay safe.": "Безопасность.", "For clients": "Для клиентов", "For freelancers": "Для фрилансеров", "Report a problem": "Сообщить о проблеме",
+    "Terms & refunds.": "Условия и возвраты.", "What you pay for": "За что ты платишь", "Billing": "Оплата", "Refunds": "Возвраты", "Profiles": "Профили",
+    "Deals between users": "Сделки между пользователями", "Privacy": "Конфиденциальность",
+    "My chats.": "Мои чаты.", "Clients writing to you": "Клиенты, которые тебе пишут", "Freelancers you wrote to": "Фрилансеры, которым ты написал",
+    "Open chat": "Открыть чат", "No messages yet. Share your profile link to get clients.": "Сообщений пока нет. Поделись ссылкой на профиль, чтобы найти клиентов.",
+    "You haven't written to anyone yet.": "Ты пока никому не писал.", "Find a freelancer →": "Найти фрилансера →", "Loading…": "Загрузка…",
+    "← My chats": "← Мои чаты", "Copy chat link": "Скопировать ссылку на чат", "Client · chat about your service": "Клиент · чат о твоей услуге",
+    "Write a message…": "Напиши сообщение…", "Send": "Отправить", "Sending…": "Отправляем…", "Upload work": "Загрузить работу", "Send file to view": "Отправить файл на просмотр",
+    "No messages yet.": "Сообщений пока нет.", "Message deleted": "Сообщение удалено", "Deleted message": "Удалённое сообщение", "You": "Ты", "Reply": "Ответить",
+    "Info": "Инфо", "Edit": "Изменить", "Copy": "Копировать", "Delete": "Удалить", "Select": "Выбрать", "Cancel": "Отмена", "Close": "Закрыть", "Save": "Сохранить",
+    "Message info": "О сообщении", "From": "От", "Sent": "Отправлено", "Edited": "Изменено", "Status": "Статус", "Deleted": "Удалено", "Length": "Длина",
+    "Edit message": "Изменить сообщение", "Locked": "Закрыто", "Unlocked": "Открыто", "View only": "Только просмотр", "View": "Смотреть", "Play": "Смотреть",
+    "Download": "Скачать", "Download my file": "Скачать мой файл", "Downloading…": "Скачиваем…", "Payment received — unlock": "Оплата получена — открыть",
+    "Waiting for the client to pay.": "Ждём оплату от клиента.", "Unlocked. The client can download it.": "Открыто. Клиент может скачать.",
+    "The client went to pay.": "Клиент перешёл к оплате.", "Check that the money arrived, then unlock.": "Проверь, что деньги пришли, и открой файл.",
+    "Open payment link again": "Открыть ссылку оплаты снова", "Continue to payment": "Перейти к оплате",
+    "I've checked the preview and want to pay.": "Я посмотрел превью и хочу оплатить.",
+    "Upload finished work": "Загрузить готовую работу", "File": "Файл", "Price (€)": "Цена (€)", "Your payment link": "Твоя ссылка для оплаты", "Upload": "Загрузить", "Uploading…": "Загружаем…",
+    "PayPal.me, a Stripe payment link or similar. The client pays you directly.": "PayPal.me, ссылка Stripe или похожая. Клиент платит тебе напрямую.",
+    "Send a file to view": "Отправить файл на просмотр", "Image or video": "Картинка или видео",
+    "Preview only. The full file unlocks after payment.": "Только превью. Полный файл откроется после оплаты.",
+    "Preview only. Download the full file from the chat.": "Только превью. Полный файл скачай в чате.", "View only. It can't be downloaded.": "Только просмотр. Скачать нельзя.",
+    "Preview hidden": "Превью скрыто", "Log out?": "Выйти?", "Log out and delete my profile": "Выйти и удалить профиль", "Delete my profile and log out": "Удалить профиль и выйти",
+    "We only get your name and email from Google. We never see your password.": "Мы получаем от Google только имя и email. Пароль мы никогда не видим.",
+    "Use your Google account. Your profile and chats will open on any device.": "Войди через Google. Профиль и чаты будут открываться на любом устройстве.",
+    "Your name": "Твоё имя", "Message": "Сообщение", "Write your name and a message.": "Напиши своё имя и сообщение.",
+    "Please keep it clean: no swearing or adult words.": "Без мата и пошлых слов, пожалуйста.",
+    "Please fill in name, email, service and price.": "Заполни имя, email, услугу и цену.", "Add at least one contact (Telegram, Discord or Instagram).": "Добавь хотя бы один контакт (Telegram, Discord или Instagram).",
+    "Please tick the age box.": "Отметь галочку про возраст.", "Write or pick what you do.": "Напиши или выбери, чем ты занимаешься.",
+    "Couldn't publish. Check your answers and try again.": "Не получилось опубликовать. Проверь ответы и попробуй снова.",
+    "Copied": "Скопировано", "Deleted": "Удалено", "Logged out": "Ты вышел", "Signed in with Google": "Вход через Google выполнен", "Profile deleted": "Профиль удалён",
+    "Opening the live site…": "Открываем сайт…", "Saving and printing previews is off.": "Сохранять и печатать превью нельзя.",
+    "You can only delete your own messages": "Можно удалять только свои сообщения", "Can't open this chat.": "Не получается открыть чат.",
+    "Delete this message for everyone?": "Удалить это сообщение у всех?", "Delete your profile forever? This can't be undone.": "Удалить профиль навсегда? Это нельзя отменить.",
+    "Did the money really arrive? After unlocking, the client can download the file.": "Деньги точно пришли? После открытия клиент сможет скачать файл.",
+    "What's wrong with this profile? (scam, fake, rude…)": "Что не так с профилем? (мошенник, фейк, грубость…)", "Thanks. We'll take a look.": "Спасибо. Мы посмотрим.",
+    "Not found.": "Не найдено.", "Back to everyone": "Назад ко всем",
+  };
+  const RX = [
+    [/^(\d+) found$/, m => `Найдено: ${m[1]}`], [/^(\d+) selected$/, m => `Выбрано: ${m[1]}`],
+    [/^Message (.+)$/, m => `Написать: ${m[1]}`], [/^Pay (€[\d.,]+)$/, m => `Оплатить ${m[1]}`], [/^Pay (.+) (€[\d.,]+)$/, m => `Оплата ${m[1]}: ${m[2]}`],
+    [/^Replies (.+)$/, m => `Отвечает ${RU[m[1]] || m[1]}`], [/^Get (Basic|Pro|Ultra)$/, m => `Купить ${m[1]}`],
+    [/^€([\d.,]+) a month$/, m => `€${m[1]} в месяц`], [/^Signed in as (.+)$/, m => `Вошёл как ${m[1]}`],
+    [/^(.+) · can't be downloaded$/, m => `${m[1]} · скачать нельзя`], [/^Waiting for (.+) to confirm your payment\. The download unlocks right after\.$/, m => `Ждём, пока ${m[1]} подтвердит оплату. Сразу после этого можно будет скачать.`],
+    [/^Ask (.+) how to pay\.$/, m => `Спроси у ${m[1]}, как оплатить.`], [/^Delete (\d+) messages for everyone\?$/, m => `Удалить ${m[1]} сообщений у всех?`],
+  ];
+  const SKIP = ".row .t, .feat h3, .feat .who, .prof h1, .phead h1, .about, .tags, .work, .best-cap b, .chat-head h1, .msg p, .quote, .dbody b, .meta b, .replybar span, time, textarea, script, style, [translate=no]";
+  const tr = s => {
+    const k = String(s).trim(); if (!k) return null;
+    if (RU[k] != null) return String(s).replace(k, RU[k]);
+    for (const [re, f] of RX) { const m = k.match(re); if (m) return String(s).replace(k, f(m)); }
+    return null;
+  };
+  const doNode = n => {
+    if (n.nodeType === 3) {
+      const p = n.parentElement; if (!p || p.closest(SKIP)) return;
+      const v = tr(n.nodeValue); if (v != null && v !== n.nodeValue) n.nodeValue = v;
+    } else if (n.nodeType === 1) {
+      if (n.matches(SKIP)) return;
+      for (const a of ["placeholder", "title", "aria-label", "data-hint"]) if (n.hasAttribute(a)) { const v = tr(n.getAttribute(a)); if (v != null && v !== n.getAttribute(a)) n.setAttribute(a, v); }
+      if (n.tagName === "OPTION" || (n.tagName === "INPUT" && /^(button|submit)$/.test(n.type))) { const v = tr(n.value); if (v != null && n.tagName === "INPUT") n.value = v; }
+      for (const c of n.childNodes) doNode(c);
+    }
+  };
+  doNode(document.body);
+  new MutationObserver(list => { for (const m of list) { if (m.type === "characterData") doNode(m.target); else m.addedNodes.forEach(doNode); } })
+    .observe(document.body, { childList: true, subtree: true, characterData: true });
+  const _c = window.confirm.bind(window), _p = window.prompt.bind(window);
+  window.confirm = msg => _c(tr(msg) || msg);
+  window.prompt = (msg, d) => _p(tr(msg) || msg, d);
 })();
 </script>
 </body>
