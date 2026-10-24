@@ -1,0 +1,1575 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>freshhands — freelancers for small jobs</title>
+<meta name="description" content="Hire a freelancer for design, video edits, websites, translations and more. Talk to them directly. 0% commission.">
+<meta property="og:title" content="freshhands — freelancers for small jobs">
+<meta property="og:description" content="Hire a freelancer. Get it done this week. 0% commission.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#f6f5f1">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23121212'/%3E%3Cpath d='M9 24V8h13v4h-8.5v3H21v4h-7.5v5z' fill='%23ffffff'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f6f5f1;
+    --paper:#ffffff;
+    --ink:#121212;
+    --muted:#6a6862;
+    --line:#e2dfd7;
+    --line-2:#cdc9bf;
+    --hot:#1f5f4a;
+    --hot-ink:#ffffff;
+    --sans:"Instrument Sans", system-ui, sans-serif;
+    --serif:"Instrument Serif", Georgia, serif;
+    --mono:"Instrument Sans", system-ui, sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{background:var(--bg);color:var(--ink);font:400 16px/1.5 var(--sans);overflow-x:hidden;min-height:100vh}
+  a{color:inherit}
+  button{font:inherit;color:inherit}
+  :focus-visible{outline:2px solid var(--hot);outline-offset:3px}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 16px}
+  .mono{font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase}
+
+  /* header */
+  header{border-bottom:1px solid var(--ink);position:sticky;top:0;background:var(--bg);z-index:10}
+  .bar{display:flex;align-items:center;gap:20px;height:60px}
+  .logo{font-weight:800;font-size:22px;letter-spacing:-.04em;text-decoration:none;display:flex;align-items:center;gap:8px}
+  .logo i{width:12px;height:12px;background:var(--hot);display:inline-block;border-radius:50%}
+  nav{margin-left:auto;display:flex;gap:18px;align-items:center}
+  nav a{text-decoration:none;font-size:15px}
+  nav a:hover{color:var(--hot)}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 18px;border:1.5px solid var(--ink);background:var(--ink);color:var(--bg);text-decoration:none;font-weight:700;font-size:15px;cursor:pointer;transition:background .15s ease-out,border-color .15s ease-out,color .15s ease-out;border-radius:999px;-webkit-tap-highlight-color:transparent}
+  .btn:hover{background:var(--hot);border-color:var(--hot);color:var(--hot-ink)}
+  .btn.ghost{background:transparent;color:var(--ink)}
+  .btn.ghost:hover{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+  .btn.hot{background:var(--hot);border-color:var(--hot);color:var(--hot-ink)}
+  .btn.hot:hover{background:var(--ink);border-color:var(--ink)}
+  .btn[aria-disabled=true]{opacity:.45;pointer-events:none}
+  nav .btn{padding:9px 16px;font-size:14px}
+  @media (max-width:560px){ nav .hide-s{display:none} }
+
+  /* hero */
+  .hero{padding-top:48px;padding-bottom:28px}
+  .hero h1{font-weight:800;font-size:clamp(46px,10.5vw,120px);line-height:.9;letter-spacing:-.05em;max-width:11ch}
+  .hero h1 span{color:var(--hot)}
+  .hero .sub{display:grid;gap:20px;margin-top:28px;align-items:end}
+  .hero p{max-width:46ch;font-size:18px;color:var(--muted)}
+  .stats{display:flex;gap:24px;flex-wrap:wrap}
+  .stats b{display:block;font:800 28px/1 var(--sans);letter-spacing:-.03em;color:var(--ink)}
+  @media (min-width:860px){ .hero .sub{grid-template-columns:1fr auto} }
+
+  /* search + categories */
+  .search{display:flex;align-items:center;gap:12px;border-bottom:2px solid var(--ink);padding:8px 0;margin-top:36px}
+  .search input{flex:1;min-width:0;border:0;background:transparent;font:500 22px/1.2 var(--sans);letter-spacing:-.01em;padding:8px 0;color:var(--ink);outline:none}
+  .search input::placeholder{color:#a8a397}
+  .cats{display:flex;gap:8px;overflow-x:auto;padding:16px 0 4px;scrollbar-width:none;margin:0 -16px;padding-left:16px;padding-right:16px}
+  .cats::-webkit-scrollbar{display:none}
+  .chip{flex:none;padding:8px 14px;border:1.5px solid var(--ink);border-radius:999px;background:transparent;cursor:pointer;font-size:14px;font-weight:500;white-space:nowrap;transition:background .15s ease-out,color .15s ease-out;-webkit-tap-highlight-color:transparent}
+  .chip:hover{background:var(--ink);color:var(--bg)}
+  .chip[aria-pressed=true]{background:var(--ink);color:var(--bg)}
+  .chip small{font-family:var(--mono);font-size:11px;opacity:.6;margin-left:4px}
+
+  /* featured */
+  .sec-h{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin:44px 0 12px}
+  .sec-h h2{font-size:15px;font-weight:700;letter-spacing:-.01em}
+  .featured{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}
+  .feat{background:var(--ink);color:var(--bg);padding:22px;text-decoration:none;display:flex;flex-direction:column;gap:14px;min-height:220px;border-radius:4px;transition:transform .15s ease-out}
+  .feat:hover{transform:translateY(-3px)}
+  .feat .who{display:flex;align-items:center;gap:12px}
+  .feat h3{font-size:24px;line-height:1.1;letter-spacing:-.03em;font-weight:700}
+  .feat .foot{margin-top:auto;display:flex;justify-content:space-between;align-items:center;font-family:var(--mono);font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:#b9b4a8}
+  .feat .foot b{color:var(--hot);font-size:15px}
+
+  /* list */
+  .list{border-top:1px solid var(--ink)}
+  .row{display:grid;grid-template-columns:44px 1fr auto;gap:14px;align-items:center;padding:16px 0;border-bottom:1px solid var(--line);text-decoration:none;transition:background .12s ease-out}
+  .row:hover{background:#ebe8de}
+  .row .t{min-width:0}
+  .row .n{font-weight:700;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .row .d{color:var(--muted);font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .row .p{text-align:right;font-weight:700;white-space:nowrap}
+  .row .p small{display:block;font:400 11px/1.4 var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+  @media (min-width:860px){ .row{grid-template-columns:44px 1.1fr 1fr 140px 110px} .row .cat,.row .rep{display:block} }
+  .row .cat,.row .rep{display:none;font-family:var(--mono);font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+
+  .av{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:17px;color:#fff;flex:none;letter-spacing:-.02em}
+  .av.big{width:84px;height:84px;font-size:32px}
+  .badge{font:500 10px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;padding:4px 7px;border-radius:3px;border:1px solid currentColor}
+  .badge.pro{color:var(--ink)}
+  .badge.ultra{background:var(--hot);border-color:var(--hot);color:#fff}
+
+  .empty{padding:40px 0;color:var(--muted);border-bottom:1px solid var(--line)}
+  .empty a{color:var(--ink);font-weight:700}
+
+  /* ad slot */
+  .ad{margin:16px 0;padding:14px 16px;border:1px dashed var(--line);display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:14px;color:var(--muted);min-height:90px}
+  .ad .mono{font-size:10px}
+  .ad a{color:var(--ink);font-weight:700}
+
+  /* join band */
+  .band{margin-top:64px;padding-top:40px;padding-bottom:40px;border-top:1px solid var(--ink);display:grid;gap:20px}
+  .band h2{font-size:clamp(32px,6vw,56px);line-height:1;letter-spacing:-.04em;font-weight:800;max-width:16ch}
+  @media (min-width:860px){ .band{grid-template-columns:1fr auto;align-items:end} }
+
+  /* profile */
+  .back{display:inline-block;margin:24px 0 8px;text-decoration:none;color:var(--muted)}
+  .back:hover{color:var(--ink)}
+  .prof{display:grid;gap:32px;padding-bottom:24px}
+  @media (min-width:860px){ .prof{grid-template-columns:1fr 340px;gap:64px} .side{position:sticky;top:84px;align-self:start} }
+  .prof h1{font-size:clamp(36px,7vw,64px);line-height:.98;letter-spacing:-.045em;font-weight:800;margin:18px 0 14px}
+  .prof .meta{display:flex;gap:10px;align-items:center;flex-wrap:wrap;color:var(--muted)}
+  .prof .about{font-size:18px;max-width:60ch;margin-top:20px}
+  .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:20px}
+  .tags span{font-size:14px;padding:4px 10px;background:#e7e3d8;border-radius:999px}
+  .block{margin-top:36px}
+  .block h2{font:500 12px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+  .work a{display:flex;justify-content:space-between;gap:12px;padding:14px 0;border-top:1px solid var(--line);text-decoration:none;font-weight:500}
+  .work a:last-child{border-bottom:1px solid var(--line)}
+  .work a:hover{color:var(--hot)}
+  .work a span:last-child{font-family:var(--mono);font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:50%}
+  .side{border:1.5px solid var(--ink);padding:22px;border-radius:4px;background:#faf9f4}
+  .side .price{font-size:44px;font-weight:800;letter-spacing:-.04em;line-height:1}
+  .side .price small{font-size:15px;font-weight:500;color:var(--muted);letter-spacing:0}
+  .facts{margin:18px 0;display:grid;gap:8px;font-size:14px}
+  .facts div{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line);padding-bottom:8px}
+  .facts span:first-child{color:var(--muted)}
+  .contacts{display:grid;gap:8px}
+  .contacts .btn{width:100%}
+  .warn{margin-top:16px;font-size:13px;color:var(--muted)}
+  .warn a{color:var(--ink)}
+
+  /* plans */
+  .page-h{padding-top:48px;padding-bottom:12px}
+  .page-h h1{font-size:clamp(40px,8vw,88px);line-height:.92;letter-spacing:-.05em;font-weight:800;max-width:12ch}
+  .page-h p{color:var(--muted);font-size:18px;max-width:52ch;margin-top:18px}
+  .plans{display:grid;gap:12px;margin:36px 0 12px}
+  @media (min-width:700px){ .plans{grid-template-columns:repeat(2,1fr)} }
+  @media (min-width:1000px){ .plans{grid-template-columns:repeat(4,1fr)} }
+  .plan{border:1.5px solid var(--ink);padding:22px;display:flex;flex-direction:column;gap:14px;border-radius:4px}
+  .plan h3{font-size:15px;font-weight:700}
+  .plan .amt{font-size:48px;font-weight:800;letter-spacing:-.05em;line-height:1}
+  .plan .amt small{font-size:15px;font-weight:500;color:var(--muted);letter-spacing:0}
+  .plan ul{list-style:none;display:grid;gap:8px;font-size:15px}
+  .plan li{padding-left:18px;position:relative}
+  .plan li::before{content:"";position:absolute;left:0;top:.6em;width:8px;height:2px;background:currentColor}
+  .plan .btn{margin-top:auto}
+  .plan.ultra{background:var(--ink);color:var(--bg)}
+  .plan.ultra .amt small{color:#b9b4a8}
+  .plan.ultra .btn{background:var(--hot);border-color:var(--hot);color:#fff}
+  .plan.ultra .btn:hover{background:var(--bg);border-color:var(--bg);color:var(--ink)}
+  @media (min-width:1000px){ .plan.ultra{transform:translateY(-14px)} }
+  .note{font-size:14px;color:var(--muted);max-width:70ch}
+
+  /* paid perks */
+  .open{display:inline-flex;align-items:center;gap:6px;font:500 11px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:#15803d}
+  .open i{width:8px;height:8px;border-radius:50%;background:#22c55e;box-shadow:0 0 0 0 rgba(34,197,94,.6);animation:pulse 1.8s ease-out infinite}
+  @keyframes pulse{70%{box-shadow:0 0 0 8px rgba(34,197,94,0)}100%{box-shadow:0 0 0 0 rgba(34,197,94,0)}}
+  .row .open{font-size:0;gap:0}
+  .phead{padding-bottom:36px;margin-bottom:8px}
+  .phead .back{color:inherit;opacity:.7}
+  .phead .av{box-shadow:0 0 0 3px currentColor}
+  .phead .meta,.phead .meta span{color:inherit}
+  .phead .open{color:inherit}
+  .prof .meta b{color:var(--ink)}
+  .phead .meta b{color:inherit}
+  .phead h1{font-size:clamp(36px,7vw,64px);line-height:.98;letter-spacing:-.045em;font-weight:800;margin:18px 0 14px;max-width:18ch}
+  .prof[style] .side{border-color:var(--acc);box-shadow:6px 6px 0 var(--acc)}
+  .prof[style] .tags span{background:transparent;border:1.5px solid var(--acc)}
+  .best{display:block;text-decoration:none;border:1.5px solid var(--ink);border-radius:4px;overflow:hidden}
+  .best-shot{position:relative;aspect-ratio:16/10;overflow:hidden;background:#e7e3d8}
+  .best-shot iframe{position:absolute;top:0;left:0;width:250%;height:250%;border:0;transform:scale(.4);transform-origin:0 0;pointer-events:none}
+  .best-cap{display:flex;justify-content:space-between;gap:12px;padding:12px 14px;border-top:1.5px solid var(--ink);background:#faf9f4}
+  .best-cap span{font-family:var(--mono);font-size:12px;color:var(--muted)}
+  .best:hover .best-cap b{color:var(--hot)}
+  .plan{position:relative}
+  .plan .tagp{position:absolute;top:-11px;left:20px;background:var(--hot);color:#fff;font:500 11px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;padding:6px 8px;border-radius:3px}
+  .plan .pm{font:500 12px/1 var(--mono);letter-spacing:.04em;color:var(--muted);margin-top:-6px}
+  .plan.ultra .pm{color:#b9b4a8}
+  .plan.pro{box-shadow:6px 6px 0 var(--hot)}
+  .compare{margin:48px 0 0;border-top:1px solid var(--ink)}
+  .compare h2{font-size:clamp(28px,5vw,44px);letter-spacing:-.04em;line-height:1;font-weight:800;margin:28px 0 8px;max-width:20ch}
+
+  /* apply form */
+  .form{max-width:620px;display:grid;gap:18px;margin-top:24px}
+  .form label{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 0;font-weight:500;font-size:15px}
+  .form label > input:not([type=checkbox]),.form label > select,.form label > textarea,.form label > small{flex:0 0 100%}
+  .form small{font-weight:400;color:var(--muted);font-size:13px}
+  .form input:not([type=checkbox]),.form select,.form textarea{width:100%;font:400 17px/1.4 var(--sans);color:var(--ink);background:#faf9f4;border:1.5px solid var(--ink);border-radius:4px;padding:12px 14px;outline:none}
+  .form input:focus,.form select:focus,.form textarea:focus{border-color:var(--hot)}
+  .form textarea{resize:vertical}
+  .form .two{display:grid;gap:18px}
+  @media (min-width:560px){ .form .two{grid-template-columns:1fr 1fr} }
+  .form .check{display:flex;flex-wrap:nowrap;gap:10px;align-items:flex-start;font-weight:400}
+  .form .check input{width:20px;height:20px;margin-top:2px;accent-color:var(--hot);flex:none}
+  .form .btn{justify-self:start;padding:16px 28px}
+  .err{color:var(--hot);font-weight:500;min-height:1px}
+  .form em{font:500 11px/1 var(--mono);font-style:normal;letter-spacing:.06em;text-transform:uppercase;margin-left:6px}
+  .form .opt{color:var(--muted)}
+  .form .req{color:var(--hot)}
+  .form label > em{display:inline}
+  .form .group{border:1.5px dashed var(--line);border-radius:4px;padding:16px;display:grid;gap:18px}
+  .form .group legend{font-weight:500;font-size:15px;padding:0 6px}
+  .form .lead{font-size:14px;color:var(--muted)}
+
+  /* text pages */
+  .text{max-width:68ch;padding-bottom:24px}
+  .text h2{font-size:24px;letter-spacing:-.02em;margin:36px 0 8px}
+  .text p,.text li{font-size:17px;margin-bottom:10px}
+  .text ul{padding-left:20px}
+
+  footer{margin-top:80px;border-top:1px solid var(--ink);padding:24px 0 40px}
+  footer .wrap{display:flex;gap:20px;flex-wrap:wrap;justify-content:space-between;align-items:center}
+  footer nav{margin:0;flex-wrap:wrap;gap:14px}
+  footer nav a{font-size:14px;color:var(--muted)}
+  .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--bg);padding:12px 18px;border-radius:999px;font-size:14px;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:20}
+  .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  /* ===== calmer, more professional layer ===== */
+  .mono,.row .cat,.row .rep,.block h2,.badge,.open,.plan .pm,.plan .tagp,.form em,.chip small,.feat .foot,.best-cap span,.work a span:last-child{font-family:var(--sans);letter-spacing:.08em}
+  .mono{font-size:11px;font-weight:600}
+  header{border-bottom:1px solid var(--line);background:var(--bg)}
+  body,header,.row,.chip,.search,.side,.plan,.btn{transition:background-color .2s ease-out,color .2s ease-out,border-color .2s ease-out}
+  .logo{font-weight:700;font-size:20px;letter-spacing:-.03em}
+  .logo i{border-radius:3px;width:10px;height:10px}
+  nav a{font-weight:500;color:var(--muted)}
+  nav a:hover{color:var(--ink)}
+  .btn{border-radius:6px;font-weight:600;border-width:1px}
+  nav .btn{color:var(--bg)}
+  .btn:hover{background:var(--hot);border-color:var(--hot)}
+  .hero h1,.page-h h1,.prof h1,.phead h1,.band h2,.compare h2{font-family:var(--serif);font-weight:400;letter-spacing:-.02em;line-height:1}
+  .hero h1{font-size:clamp(48px,9vw,104px);max-width:13ch}
+  .hero h1 span{font-style:italic;color:var(--hot)}
+  .page-h h1{font-size:clamp(44px,7vw,80px)}
+  .prof h1,.phead h1{font-size:clamp(38px,6vw,60px)}
+  .band h2,.compare h2{font-size:clamp(32px,5vw,52px)}
+  .hero p{color:var(--muted);font-size:18px}
+  .stats b,.side .price,.plan .amt{font-family:var(--serif);font-weight:400;letter-spacing:-.01em}
+  .stats b{font-size:34px}
+  .side .price{font-size:48px}
+  .plan .amt{font-size:56px}
+  .search{border:1px solid var(--line-2);border-radius:6px;background:var(--paper);padding:6px 16px;border-bottom-width:1px}
+  .search:focus-within{border-color:var(--ink)}
+  .search input{font-size:18px;font-weight:400}
+  .chip{border:1px solid var(--line-2);border-radius:6px;font-weight:500;background:var(--paper)}
+  .chip:hover{background:var(--bg);color:var(--ink);border-color:var(--ink)}
+  .chip[aria-pressed=true]{background:var(--ink);border-color:var(--ink);color:#fff}
+  .sec-h h2{font-size:13px;text-transform:uppercase;letter-spacing:.08em;font-weight:600}
+  .list{border-top:1px solid var(--line-2)}
+  .row:hover{background:var(--paper)}
+  .feat{border-radius:8px}
+  .feat:hover{transform:none;background:#1b1b1b}
+  .feat h3{font-family:var(--serif);font-weight:400;font-size:28px;letter-spacing:-.01em}
+  .feat .foot b{color:#8fd1b6}
+  .badge{font-weight:600;border-radius:4px}
+  .badge.ultra{background:var(--hot);border-color:var(--hot)}
+  .side,.plan,.best{border:1px solid var(--line-2);border-radius:8px;background:var(--paper)}
+  .plan.pro{box-shadow:none;border-color:var(--ink)}
+  .plan.ultra{background:var(--ink);border-color:var(--ink)}
+  .plan.ultra .btn{background:#fff;border-color:#fff;color:var(--ink)}
+  .plan.ultra .btn:hover{background:var(--hot);border-color:var(--hot);color:#fff}
+  @media (min-width:1000px){ .plan.ultra{transform:none} }
+  .plan .tagp{border-radius:4px;background:var(--ink)}
+  .plan h3{font-size:13px;text-transform:uppercase;letter-spacing:.08em}
+  .plan li::before{width:6px;height:6px;border-radius:50%;top:.55em;background:var(--hot)}
+  .plan.ultra li::before{background:#8fd1b6}
+  .prof[style] .side{box-shadow:none;border-top:4px solid var(--acc)}
+  .tags span{background:transparent;border:1px solid var(--line-2);border-radius:6px}
+  .prof[style] .tags span{border-width:1px}
+  .best-cap{border-top:1px solid var(--line-2);background:var(--paper)}
+  .work a:hover{color:var(--hot)}
+  .ad{border:1px solid var(--line);border-radius:8px;background:var(--paper)}
+  .form input:not([type=checkbox]),.form select,.form textarea{border:1px solid var(--line-2);border-radius:6px;background:var(--paper)}
+  .form input:focus,.form select:focus,.form textarea:focus{border-color:var(--ink)}
+  .form .group{border:1px solid var(--line);border-radius:8px;background:rgba(255,255,255,.5)}
+  .form .req{color:var(--hot)}
+  .err{color:#b42318}
+  footer{border-top:1px solid var(--line)}
+  .band{border-top:1px solid var(--line)}
+  .compare{border-top:1px solid var(--line)}
+
+  /* small hint under a button on hover */
+  .hint{position:relative}
+  .hint::after{content:attr(data-hint);position:absolute;left:50%;top:calc(100% + 6px);transform:translate(-50%,-4px);font:500 11px/1 var(--sans);letter-spacing:.04em;color:var(--muted);white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .15s ease-out,transform .15s ease-out}
+  .hint:hover::after,.hint:focus-visible::after{opacity:1;transform:translate(-50%,0)}
+  .contacts .hint{margin-bottom:14px}
+
+  /* ===== design themes (pick one with the switcher) ===== */
+  [data-theme=ink]{--bg:#111214;--paper:#1a1b1e;--ink:#f2f1ec;--muted:#9a988f;--line:#2a2b2f;--line-2:#3a3b40;--hot:#7fd1ae;--hot-ink:#0d1f18}
+  [data-theme=cobalt]{--bg:#f7f8fa;--paper:#ffffff;--ink:#0f172a;--muted:#5b6475;--line:#e5e8ee;--line-2:#cfd5df;--hot:#2742d6}
+  [data-theme=clay]{--bg:#f4ede4;--paper:#fbf7f1;--ink:#2a1d14;--muted:#7a6555;--line:#e6dace;--line-2:#d3c3b2;--hot:#b4532a}
+  [data-theme=ink] .feat{background:var(--paper);color:var(--ink);border:1px solid var(--line-2)}
+  [data-theme=ink] .feat .foot{color:var(--muted)}
+  [data-theme=ink] .plan.ultra{background:var(--paper);color:var(--ink);border-color:var(--hot)}
+  [data-theme=ink] .plan.ultra .btn{background:var(--hot);border-color:var(--hot);color:var(--hot-ink)}
+  [data-theme=ink] .chip[aria-pressed=true]{color:var(--bg)}
+  [data-theme=ink] .search input::placeholder{color:#6d6b65}
+  [data-theme=ink] .empty-box,[data-theme=ink] .form .group{background:transparent}
+  .themes{display:flex;align-items:center;gap:6px;background:var(--paper);border:1px solid var(--line-2);border-radius:999px;padding:6px 10px 6px 14px}
+  .themes span{font-size:12px;font-weight:600;color:var(--muted);margin-right:4px}
+  .themes button{width:26px;height:26px;border-radius:50%;border:2px solid var(--paper);box-shadow:0 0 0 1px var(--line-2);cursor:pointer;padding:0}
+  .themes button[aria-pressed=true]{box-shadow:0 0 0 2px var(--ink)}
+
+  .modal{position:fixed;inset:0;background:rgba(0,0,0,.45);display:grid;place-items:center;padding:16px;z-index:50}
+  .modal-box{background:var(--paper);color:var(--ink);border-radius:10px;padding:24px;max-width:420px;width:100%;box-shadow:0 20px 50px rgba(0,0,0,.25)}
+  .modal-box h3{font:400 32px/1.1 var(--serif)}
+  .modal-box p{color:var(--muted);margin:10px 0 20px}
+  .modal-actions{display:grid;gap:8px}
+  .btn.danger{background:#b42318;border-color:#b42318;color:#fff}
+  .btn.danger:hover{background:#8f1c13;border-color:#8f1c13}
+  .mine-tools{margin-top:16px;padding-top:14px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:10px;font-size:13px}
+  .mine-tools button{border:0;background:none;color:#b42318;cursor:pointer;font:inherit;padding:0}
+
+  /* chat */
+  .chat{display:flex;flex-direction:column;min-height:calc(100vh - 140px)}
+  .chat-head{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;padding:8px 0 16px;border-bottom:1px solid var(--line)}
+  .chat-head h1{font:400 clamp(32px,5vw,48px)/1 var(--serif);letter-spacing:-.01em}
+  .chat-log{flex:1;overflow-y:auto;padding:20px 0;display:flex;flex-direction:column;gap:10px;max-height:62vh;min-height:300px}
+  .msg{max-width:min(78%,560px);padding:10px 14px;border-radius:14px;font-size:15px;line-height:1.45}
+  .msg p{overflow-wrap:anywhere}
+  .msg time{display:block;font-size:11px;opacity:.6;margin-top:4px}
+  .msg.me{align-self:flex-end;background:var(--ink);color:var(--bg);border-bottom-right-radius:4px}
+  .msg.them{align-self:flex-start;background:var(--paper);border:1px solid var(--line);border-bottom-left-radius:4px}
+  .msg.sys{align-self:center;text-align:center;background:transparent;color:var(--muted);font-size:13px;max-width:440px}
+  .chat-bar{position:sticky;bottom:0;background:var(--bg);padding:12px 0 16px;border-top:1px solid var(--line);display:grid;gap:10px}
+  .chat-bar #upBtn{justify-self:start}
+  .chat-form{display:flex;gap:8px;align-items:flex-end}
+  .chat-form textarea{flex:1;min-width:0;resize:none;font:400 16px/1.4 var(--sans);color:var(--ink);background:var(--paper);border:1px solid var(--line-2);border-radius:10px;padding:12px 14px;outline:none}
+  .chat-form textarea:focus{border-color:var(--ink)}
+  .dcard{align-self:stretch;max-width:520px;display:grid;grid-template-columns:140px 1fr;border:1px solid var(--line-2);border-radius:10px;overflow:hidden;background:var(--paper)}
+  .dshot{position:relative;background:var(--line);display:grid;place-items:center;min-height:140px}
+  .dshot img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+  .dshot span{font:600 20px/1 var(--sans);letter-spacing:.06em;color:var(--muted)}
+  .dshot .lock{position:absolute;left:8px;top:8px;font:600 11px/1 var(--sans);letter-spacing:.06em;text-transform:uppercase;background:var(--ink);color:var(--bg);padding:5px 7px;border-radius:4px;font-style:normal}
+  .dshot .lock.open{background:var(--hot);color:var(--hot-ink)}
+  .dbody{padding:14px;display:grid;gap:8px;align-content:start}
+  .dbody b{overflow-wrap:anywhere}
+  .dbody .btn{justify-self:start;padding:10px 16px}
+  @media (max-width:480px){ .dcard{grid-template-columns:1fr} .dshot{min-height:180px} }
+  .guarded{position:relative;cursor:zoom-in;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+  .guarded img{pointer-events:none;-webkit-user-drag:none;user-select:none;transition:filter .15s}
+  .guarded::after{content:"";position:absolute;inset:0;background:transparent}
+  body.shielded .guarded img{filter:blur(24px) grayscale(.6)}
+  body.shielded .guarded::before{content:"Preview hidden";position:absolute;inset:0;display:grid;place-items:center;z-index:2;font:600 14px/1 var(--sans);color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.6)}
+  .viewer{border-radius:8px;overflow:hidden;background:var(--line);cursor:default}
+  .viewer img{display:block;width:100%;height:auto;max-height:70vh;object-fit:contain}
+  .modal-box.wide{max-width:760px}
+  @media print{ .guarded img{display:none !important} }
+  .paylist{padding-left:18px;display:grid;gap:8px;margin:10px 0 14px;color:var(--muted);font-size:15px}
+  .paylist b{color:var(--ink)}
+  .inbox-row{grid-template-columns:44px 1fr auto !important}
+  .modal-box .form{max-width:none}
+  .msg{position:relative;-webkit-user-select:text;user-select:text;transition:box-shadow .15s}
+  .msg.gone p{opacity:.6}
+  .msg.picked{box-shadow:0 0 0 2px var(--hot)}
+  .msg.flash{box-shadow:0 0 0 3px var(--hot)}
+  .msg .pick{position:absolute;top:10px;width:18px;height:18px;accent-color:var(--hot)}
+  .msg.me .pick{left:-28px}
+  .msg.them .pick{right:-28px}
+  .quote{border-left:3px solid currentColor;padding:4px 8px;margin-bottom:6px;font-size:13px;opacity:.75;cursor:pointer;display:grid;max-width:100%;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+  .quote b{font-size:12px}
+  .ctx{position:fixed;z-index:60;background:var(--paper);border:1px solid var(--line-2);border-radius:10px;box-shadow:0 12px 30px rgba(0,0,0,.18);padding:6px;min-width:170px;display:grid}
+  .ctx button{text-align:left;border:0;background:none;color:var(--ink);font:500 15px/1 var(--sans);padding:11px 12px;border-radius:6px;cursor:pointer}
+  .ctx button:hover,.ctx button:focus-visible{background:var(--bg);outline:none}
+  .ctx .danger-t{color:#b42318}
+  .replybar{display:flex;justify-content:space-between;gap:10px;align-items:center;background:var(--paper);border:1px solid var(--line);border-left:3px solid var(--hot);border-radius:8px;padding:8px 12px}
+  .replybar div{display:grid;min-width:0}
+  .replybar b{font-size:12px;color:var(--hot)}
+  .replybar span{font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .replybar button{border:0;background:none;font-size:22px;line-height:1;cursor:pointer;color:var(--muted)}
+  .selbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .selbar span{font-weight:600;margin-right:auto}
+  .selbar .btn{padding:8px 14px}
+  .chat-log{padding-left:32px;padding-right:32px}
+
+  nav .btn.navchats{background:transparent;color:var(--ink);border-color:var(--line-2)}
+  nav .btn.navchats:hover{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+  @media (max-width:560px){ nav{gap:10px} nav .btn{padding:8px 12px} }
+
+  .navout{border:0;background:transparent;cursor:pointer;font-weight:500;font-size:14px;color:var(--muted);padding:6px 0}
+  .navout:hover{color:var(--ink)}
+  .hidden{display:none !important}
+  @media (min-width:860px){ .row .cat,.row .rep{display:block} }
+
+  /* how it works */
+  .how{display:grid;gap:0;margin-top:56px;border-top:1px solid var(--line)}
+  .how div{padding:22px 0;border-bottom:1px solid var(--line);display:grid;grid-template-columns:48px 1fr;gap:4px 12px}
+  .how b{grid-row:span 2;font:400 34px/1 var(--serif);color:var(--hot)}
+  .how h3{font-size:17px;font-weight:600}
+  .how p{color:var(--muted);font-size:15px;max-width:34ch}
+  @media (min-width:860px){ .how{grid-template-columns:repeat(3,1fr);gap:32px;border-top:0} .how div{border-top:1px solid var(--ink);border-bottom:0} }
+
+  /* empty state */
+  .empty-box{margin-top:12px;padding:40px 24px;border:1px dashed var(--line-2);border-radius:8px;text-align:center;background:rgba(255,255,255,.5)}
+  .empty-box h3{font:400 32px/1.1 var(--serif);letter-spacing:-.01em}
+  .empty-box p{color:var(--muted);margin:10px auto 20px;max-width:40ch}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap bar">
+    <a class="logo" href="#/"><i></i><span id="logoName">freshhands</span></a>
+    <nav>
+      <a href="#/" class="hide-s">Browse</a>
+      <a href="#/plans">Plans</a>
+      <a href="#/safety" class="hide-s">Safety</a>
+      <a href="#/inbox" id="navMsg" class="btn ghost navchats hidden">My chats</a>
+      <a class="btn" href="#/plans" id="navJoin">Join</a>
+      <button class="navout hidden" id="navOut" type="button">Log out</button>
+    </nav>
+  </div>
+</header>
+
+<main id="app"></main>
+
+<footer>
+  <div class="wrap">
+    <span class="mono" id="footName">freshhands</span>
+    <nav>
+      <a href="#/">Browse</a>
+      <a href="#/plans">Plans</a>
+      <a href="#/safety">Safety</a>
+      <a href="#/terms">Terms &amp; refunds</a>
+    </nav>
+  </div>
+</footer>
+<div class="toast" id="toast"></div>
+<div class="themes" id="themes" role="group" aria-label="Design">
+  <span>Theme</span>
+  <button data-t="forest" title="Forest" style="background:linear-gradient(135deg,#f6f5f1 50%,#1f5f4a 50%)"></button>
+  <button data-t="ink" title="Ink (dark)" style="background:linear-gradient(135deg,#111214 50%,#7fd1ae 50%)"></button>
+  <button data-t="cobalt" title="Cobalt" style="background:linear-gradient(135deg,#f7f8fa 50%,#2742d6 50%)"></button>
+  <button data-t="clay" title="Clay" style="background:linear-gradient(135deg,#f4ede4 50%,#b4532a 50%)"></button>
+</div>
+<script>
+// Theme switcher: visitors pick the look they like (remembered on their device)
+(() => {
+  const box = document.getElementById("themes"), root = document.documentElement;
+  const foot = document.querySelector("footer .wrap"); if (foot) foot.appendChild(box);
+  let t = "forest"; try { t = localStorage.getItem("freshhands:theme") || t; } catch (e) {}
+  const set = v => {
+    if (v === "forest") root.removeAttribute("data-theme"); else root.setAttribute("data-theme", v);
+    box.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", b.dataset.t === v));
+    try { localStorage.setItem("freshhands:theme", v); } catch (e) {}
+  };
+  box.addEventListener("click", e => { const b = e.target.closest("button"); if (b) set(b.dataset.t); });
+  set(t);
+})();
+</script>
+
+<script src="data.js"></script>
+<script>
+(() => {
+  const SITE = window.SITE || {};
+  const LOCAL = (window.FREELANCERS || []).slice();
+  let PEOPLE = LOCAL.slice();
+
+  // ---------- database (Supabase) ----------
+  const SB = SITE.supabase || {};
+  const DB = /^https:\/\/[a-z0-9-]+\.supabase\.co\/?$/i.test(SB.url || "") && String(SB.key || "").length > 20;
+  async function db(path, opts = {}) {
+    const r = await fetch(SB.url.replace(/\/$/, "") + "/rest/v1/" + path, {
+      ...opts,
+      headers: { apikey: SB.key, "Content-Type": "application/json", ...(opts.headers || {}) },
+    });
+    if (!r.ok) throw new Error(r.status + " " + (await r.text()).slice(0, 200));
+    return r.status === 204 || r.headers.get("content-length") === "0" ? null : r.json().catch(() => null);
+  }
+  const fromRow = r => ({
+    id: r.slug, name: r.name, plan: r.plan, category: r.category, title: r.title, about: r.about,
+    skills: r.skills || [], languages: r.languages || [], priceFrom: r.price_from, replyIn: r.reply_in,
+    portfolio: Array.isArray(r.portfolio) ? r.portfolio : [], contact: r.contact || {}, color: r.color || "",
+    available: r.available, joined: String(r.created_at || "").slice(0, 10), fromDb: true, hasChat: !!r.has_chat, customCategory: r.custom_category || "",
+  });
+  async function loadPeople() {
+    if (!DB) return;
+    try {
+      const rows = await db("public_profiles?select=*&order=created_at.desc&limit=1000");
+      const local = new Set(LOCAL.map(p => p.id));
+      PEOPLE = LOCAL.concat((rows || []).map(fromRow).filter(p => !local.has(p.id)));
+    } catch (e) { console.warn("Could not load profiles", e); }
+  }
+  const app = document.getElementById("app");
+
+  const CATS = [
+    ["design", "Design"],
+    ["video", "Video editing"],
+    ["websites", "Websites"],
+    ["gamedev", "Game dev & 3D"],
+    ["music", "Music & audio"],
+    ["writing", "Writing"],
+    ["translation", "Translation"],
+    ["tutoring", "Tutoring"],
+    ["other", "Other"],
+  ];
+  const catName = id => (CATS.find(c => c[0] === id) || [, "Other"])[1];
+  const catLabel = p => p.category === "other" && p.customCategory ? p.customCategory : catName(p.category);
+
+  // ---------- bad-word filter (same rules as the database) ----------
+  const BAD = new RegExp([
+    "fuck", "shit", "bitch", "cunt", "whore", "slut", "nigg", "faggot", "asshole", "motherf", "porn", "hentai", "onlyfans", "xxx",
+    "(?<![\\p{L}])(dick|cock|tits?|boobs?|nudes?|sex|sexy|cum|anal)(?![\\p{L}])", "(?<![\\p{L}])(pussy|rape|penis|vagina)",
+    "(?<![\\p{L}])(на|по|от|ни)?ху[йяеёи]", "пизд", "(?<![\\p{L}])бля", "(?<![\\p{L}])(за|вы|по|у|от|на|до|при|раз|съ|въ)?еб[аулиён]", "ёб", "(?<![\\p{L}])сук[аиу](?![\\p{L}])",
+    "сучк", "мудак", "мудил", "пидор", "пидр", "залуп", "шлюх", "дроч", "гандон", "порн", "(?<![\\p{L}])секс", "(?<![\\p{L}])голы[ей]",
+    "retard", "говн", "гавн", "дерьм", "ублюд", "(?<![\\p{L}])мраз[ьи]", "долбо", "(?<![\\p{L}])дебил", "(?<![\\p{L}])придур", "(?<![\\p{L}])(чмо|лох)(?![\\p{L}])",
+  ].join("|"), "iu");
+  const isClean = (...parts) => !BAD.test(parts.flat().join(" ").toLowerCase().replace(/[0134@$]/g, c => ({ 0: "o", 1: "i", 3: "e", 4: "a", "@": "a", $: "s" })[c]));
+  const CLEAN_MSG = "Please keep it clean: no swearing or adult words.";
+
+  // ---------- smart search: typos, synonyms, Russian words ----------
+  const SYN = {
+    design: "design designer logo logos banner poster figma photoshop illustrator illustration art drawing draw thumbnail branding brand ui ux icon avatar дизайн дизайнер логотип лого баннер постер рисунок рисовать арт превью обложка аватарка иконка",
+    video: "video videos edit edits editing editor montage tiktok reels youtube shorts premiere capcut aftereffects motion монтаж видео ролик клип тикток ютуб монтажер",
+    websites: "website websites site sites web landing html css javascript js wordpress shop store page сайт сайты веб лендинг верстка магазин страница",
+    gamedev: "game games gamedev roblox unity unreal 3d blender model models modeling map maps minecraft script scripting lua игра игры роблокс модель моделька карта скрипт блендер",
+    music: "music beat beats audio mix mixing mastering song songs sound voice voiceover podcast producer музыка бит биты звук сведение песня озвучка",
+    writing: "writing writer write text texts copy copywriting article articles essay blog post posts story тексты текст статья статьи сочинение копирайт рассказ",
+    translation: "translate translation translator translating english russian spanish german french перевод переводчик перевести английский",
+    tutoring: "tutor tutoring lesson lessons math maths help homework teach teacher school exam репетитор урок уроки математика домашка учеба учеба экзамен",
+  };
+  // the same ideas in other languages (es, pt, fr, de, it, pl, tr, nl, uk, zh, ja, ko, ar)
+  const SYN_MORE = {
+    design: "diseno disenador logotipo cartel desenho designer conception graphisme affiche entwurf grafik gestaltung disegno grafica projekt grafika logo tasarim grafik ontwerp ontwerper дизайнер логотип малюнок 设计 标志 海报 デザイン ロゴ 디자인 로고 تصميم شعار",
+    video: "edicion editor montaje montagem edicao montage videoschnitt schnitt videomontaggio montaz edycja kurgu duzenleme bewerking videobewerking монтаж відео 视频 剪辑 動画 編集 영상 편집 فيديو مونتاج",
+    websites: "sitio pagina web sitio site sitedeweb webseite homepage sito pagina strona witryna websitesi sitesi webpagina сайт вебсайт 网站 网页 ウェブ サイト 웹사이트 홈페이지 موقع",
+    gamedev: "juego juegos jogo jeux jeu spiel spiele gioco gra gry oyun spel гра ігри 游戏 ゲーム 게임 لعبة",
+    music: "musica musique musik muzyka muzik muziek ritmo beat sonido son klang dzwiek ses geluid музика 音乐 音楽 음악 موسيقى",
+    writing: "escritura texto redaccion articulo redacao texte redaction schreiben artikel scrittura testo pisanie tekst yazi makale schrijven tekst текст стаття 写作 文章 ライティング 文章 글쓰기 كتابة",
+    translation: "traduccion traductor traducao traduction traducteur ubersetzung ubersetzer traduzione tlumaczenie ceviri vertaling переклад перекладач 翻译 翻訳 번역 ترجمة",
+    tutoring: "tutor clases profesor aulas professor cours professeur nachhilfe lehrer ripetizioni korepetycje ozel ders bijles репетитор уроки 辅导 家教 家庭教師 과외 دروس",
+  };
+  for (const k in SYN_MORE) SYN[k] += " " + SYN_MORE[k];
+  // Cyrillic → Latin, so "dizain" finds "дизайн" and "сайт" finds "sait"
+  const TR = { а: "a", б: "b", в: "v", г: "g", ґ: "g", д: "d", е: "e", є: "e", ж: "zh", з: "z", и: "i", і: "i", ї: "i", й: "i", к: "k", л: "l", м: "m", н: "n", о: "o", п: "p", р: "r", с: "s", т: "t", у: "u", ф: "f", х: "h", ц: "ts", ч: "ch", ш: "sh", щ: "sch", ъ: "", ы: "y", ь: "", э: "e", ю: "yu", я: "ya" };
+  const translit = w => w.replace(/[а-яєіїґ]/g, c => TR[c] ?? c);
+  const norm = s => String(s || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/ё/g, "е");
+  const words = s => norm(s).split(/[^\p{L}\p{N}]+/u).filter(Boolean).map(translit);
+  const SYN_WORDS = Object.fromEntries(Object.entries(SYN).map(([k, v]) => [k, words(v)]));
+  function dist(a, b, max) {
+    if (Math.abs(a.length - b.length) > max) return max + 1;
+    let prev2 = null, prev = Array.from({ length: b.length + 1 }, (_, i) => i);
+    for (let i = 1; i <= a.length; i++) {
+      const cur = [i]; let best = i;
+      for (let j = 1; j <= b.length; j++) {
+        let v = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+        if (prev2 && i > 1 && j > 1 && a[i - 1] === b[j - 2] && a[i - 2] === b[j - 1]) v = Math.min(v, prev2[j - 2] + 1);
+        cur.push(v); if (v < best) best = v;
+      }
+      if (best > max) return max + 1;
+      prev2 = prev; prev = cur;
+    }
+    return prev[b.length];
+  }
+  const allowed = w => w.length <= 3 ? 0 : w.length <= 6 ? 1 : 2;
+  // close if same word, a typo of it, or one starts the other ("websit" → "websites")
+  function close(q, w) {
+    if (q === w) return 3;
+    if (q.length >= 3 && w.startsWith(q)) return 2.5;
+    const m = allowed(q);
+    if (m && dist(q, w.slice(0, Math.max(q.length, Math.min(w.length, q.length + 2))), m) <= m) return 2;
+    return m && dist(q, w, m) <= m ? 2 : 0;
+  }
+  function scorePerson(p, qWords) {
+    const hayWords = words([p.name, p.title, p.about, catLabel(p), ...(p.skills || []), ...(p.languages || [])].join(" "));
+    const catWords = SYN_WORDS[p.category] || [];
+    let total = 0, hit = 0;
+    for (const q of qWords) {
+      let s = 0;
+      for (const w of hayWords) { s = Math.max(s, close(q, w)); if (s === 3) break; }
+      if (s < 3) for (const w of catWords) { const c = close(q, w); if (c) { s = Math.max(s, c - 0.5); break; } }
+      if (s) hit++;
+      total += s;
+    }
+    return { total, hit };
+  }
+  function search(list) {
+    const qWords = words(state.q).filter(w => w.length >= 2);
+    if (!qWords.length) return { items: sorted(list), near: false };
+    const scored = list.map(p => ({ p, ...scorePerson(p, qWords) }));
+    let good = scored.filter(x => x.hit === qWords.length), near = false;
+    if (!good.length) { good = scored.filter(x => x.hit > 0); near = good.length > 0; }
+    good.sort((a, b) => (b.total - a.total) || (RANK[plan(a.p)] - RANK[plan(b.p)]));
+    return { items: good.map(x => x.p), near };
+  }
+
+  const PLANS = [
+    { id: "free",  name: "Free",  price: "€0",    per: "",       month: "free forever",
+      feats: ["Get on the site", "Show a bit of your work"] },
+    { id: "basic", name: "Basic", price: "€0.99", per: "/ year", month: "€0.08 a month",
+      feats: ["No ads on your page", "Your own color", "Show more of your work"] },
+    { id: "pro",   name: "Pro",   price: "€2",    per: "/ year", month: "€0.17 a month", tag: "Most picked",
+      feats: ["Shown before Free and Basic", "PRO badge on your profile", "“Available for work” status", "Profile card for social media"] },
+    { id: "ultra", name: "Ultra", price: "€5",    per: "/ year", month: "€0.42 a month",
+      feats: ["Featured on the home page", "Large preview of your best work", "Branded profile header", "Everything in Pro"] },
+  ];
+  const HAS = {
+    color: p => plan(p) !== "free",
+    open: p => (plan(p) === "pro" || plan(p) === "ultra") && p.available !== false,
+    story: p => plan(p) === "pro" || plan(p) === "ultra",
+    best: p => plan(p) === "ultra",
+    header: p => plan(p) === "ultra",
+  };
+  const userColor = p => HAS.color(p) && /^#[0-9a-f]{6}$/i.test(p.color || "") ? p.color : null;
+  // white or black text on top of a color
+  const onColor = hex => { const n = parseInt(hex.slice(1), 16), r = n >> 16, g = n >> 8 & 255, b = n & 255; return (r * 299 + g * 587 + b * 114) / 1000 > 150 ? "#141414" : "#ffffff"; };
+  const RANK = { ultra: 0, pro: 1, basic: 2, free: 3 };
+  const LIMIT = { free: 3, basic: 6, pro: 12, ultra: 999 };
+
+  // ---------- helpers ----------
+  const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+  const safeUrl = u => /^https?:\/\//i.test(String(u || "")) ? String(u) : "";
+  const plan = p => (RANK[p.plan] != null ? p.plan : "free");
+  const COLORS = ["#1f5f4a", "#2b4a8b", "#7a4b2a", "#6b2d4a", "#3f4a55", "#5a5232", "#245a66", "#121212"];
+  const color = s => { let h = 0; for (const c of String(s)) h = (h * 31 + c.charCodeAt(0)) >>> 0; return COLORS[h % COLORS.length]; };
+  const initials = n => String(n || "?").trim().split(/\s+/).map(w => w[0]).join("").slice(0, 2).toUpperCase();
+  const avatar = (p, big) => { const c = userColor(p) || color(p.id || p.name); return `<span class="av${big ? " big" : ""}" style="background:${c};color:${onColor(c)}">${esc(initials(p.name))}</span>`; };
+  const openDot = p => HAS.open(p) ? `<span class="open" title="Available for work"><i></i>Available</span>` : "";
+  const badge = p => plan(p) === "ultra" ? `<span class="badge ultra">Ultra</span>` : plan(p) === "pro" ? `<span class="badge pro">Pro</span>` : "";
+  const sorted = list => list.slice().sort((a, b) => (RANK[plan(a)] - RANK[plan(b)]) || String(b.joined || "").localeCompare(String(a.joined || "")));
+  const toast = t => { const el = document.getElementById("toast"); el.textContent = t; el.classList.add("on"); clearTimeout(toast.id); toast.id = setTimeout(() => el.classList.remove("on"), 2200); };
+
+  document.getElementById("logoName").textContent = SITE.name || "freshhands";
+  document.getElementById("footName").textContent = `© ${new Date().getFullYear()} ${SITE.name || "freshhands"}`;
+
+  // ---------- ads (rare) ----------
+  let adsLoaded = false;
+  function adHTML() {
+    const a = SITE.ads || {};
+    if (a.adsenseClient && a.adsenseSlot) {
+      if (!adsLoaded) {
+        adsLoaded = true;
+        const s = document.createElement("script");
+        s.async = true; s.crossOrigin = "anonymous";
+        s.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=" + encodeURIComponent(a.adsenseClient);
+        document.head.appendChild(s);
+      }
+      return `<div class="ad" style="display:block;border-style:solid"><span class="mono">Ad</span>
+        <ins class="adsbygoogle" style="display:block" data-ad-client="${esc(a.adsenseClient)}" data-ad-slot="${esc(a.adsenseSlot)}" data-ad-format="auto" data-full-width-responsive="true"></ins></div>`;
+    }
+    // Until AdSense is on, the slot promotes our own plans.
+    return `<div class="ad"><span>Want to be seen first? <a href="#/plans">Get featured for €5 a year →</a></span><span class="mono">Ad</span></div>`;
+  }
+  function fillAds() {
+    if (!(SITE.ads && SITE.ads.adsenseClient)) return;
+    document.querySelectorAll("ins.adsbygoogle:not([data-done])").forEach(el => {
+      el.setAttribute("data-done", "1");
+      try { (window.adsbygoogle = window.adsbygoogle || []).push({}); } catch (e) {}
+    });
+  }
+
+  // ---------- pages ----------
+  const state = { q: "", cat: "" };
+
+  function home() {
+    const total = PEOPLE.length;
+    const counts = {}; PEOPLE.forEach(p => counts[p.category] = (counts[p.category] || 0) + 1);
+    app.innerHTML = `
+      <section class="wrap hero">
+        <h1>Hire a freelancer. Get it done <span>this&nbsp;week.</span></h1>
+        <div class="sub">
+          <p>People who design, edit, build and translate: beginners, students and pros. Pick one, message them, done. No fees.</p>
+          <div class="stats">
+            ${total >= 10 ? `<div><b>${total}</b><span class="mono">freelancers</span></div>` : `<div><b>New</b><span class="mono">just opened</span></div>`}
+            <div><b>${CATS.length}</b><span class="mono">categories</span></div>
+            <div><b>0%</b><span class="mono">commission</span></div>
+          </div>
+        </div>
+        <label class="search">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+          <input id="q" type="search" placeholder="Logo, TikTok edit, Roblox map…" value="${esc(state.q)}" aria-label="Search freelancers" autocomplete="off">
+        </label>
+        <div class="cats" id="cats">
+          <button class="chip" data-c="" aria-pressed="${!state.cat}">All<small>${total}</small></button>
+          ${CATS.map(([id, n]) => `<button class="chip" data-c="${id}" aria-pressed="${state.cat === id}">${n}<small>${counts[id] || 0}</small></button>`).join("")}
+        </div>
+      </section>
+      <section class="wrap" id="results"></section>
+      <section class="wrap">
+        <div class="how">
+          <div><b>1</b><h3>Find someone</h3><p>Search by skill or category and look at their work.</p></div>
+          <div><b>2</b><h3>Message them directly</h3><p>Agree on the task, price and deadline in your own chat.</p></div>
+          <div><b>3</b><h3>Pay them, not us</h3><p>The full amount goes to the freelancer. We take no commission.</p></div>
+        </div>
+      </section>
+      <section class="wrap band">
+        <h2>Offer your skills to clients.</h2>
+        <a class="btn hot" href="#/apply">Create a free profile</a>
+      </section>`;
+    const q = document.getElementById("q");
+    q.addEventListener("input", () => { state.q = q.value; results(); });
+    document.getElementById("cats").addEventListener("click", e => {
+      const b = e.target.closest(".chip"); if (!b) return;
+      state.cat = b.dataset.c;
+      document.querySelectorAll("#cats .chip").forEach(x => x.setAttribute("aria-pressed", x === b));
+      results();
+    });
+    results();
+  }
+
+  function matches(p) {
+    return !state.cat || p.category === state.cat;
+  }
+
+  function results() {
+    const found = search(PEOPLE.filter(matches)), list = found.items;
+    const feat = list.filter(p => plan(p) === "ultra");
+    const rest = list.filter(p => plan(p) !== "ultra");
+    const every = Math.max(6, Number((SITE.ads || {}).every) || 12);
+    let html = "";
+    if (feat.length) {
+      html += `<div class="sec-h"><h2>Featured</h2><span class="mono">Ultra members</span></div>
+        <div class="featured">${feat.map(p => `
+          <a class="feat" href="#/p/${encodeURIComponent(p.id)}">
+            <div class="who">${avatar(p)}<div><div style="font-weight:700">${esc(p.name)}</div><div class="mono" style="color:#b9b4a8">${esc(catLabel(p))}</div></div></div>
+            <h3>${esc(p.title)}</h3>
+            <div class="foot"><span>Replies ${esc(p.replyIn || "fast")}</span><b>from €${esc(p.priceFrom)}</b></div>
+          </a>`).join("")}</div>`;
+    }
+    html += `<div class="sec-h"><h2>${state.cat ? esc(catName(state.cat)) : "Everyone"}</h2><span class="mono">${list.length} found</span></div>`;
+    if (found.near) html += `<p class="note" style="margin:-4px 0 10px">No exact match. Showing the closest ones.</p>`;
+    html += `<div class="list">`;
+    if (!rest.length) {
+      html += list.length ? `<div class="empty">That's everyone for now.</div>`
+        : PEOPLE.length ? `<div class="empty">No matches. Try another word or category.</div>`
+        : `<div class="empty-box"><h3>We're adding our first freelancers.</h3><p>Create a free profile now and be among the first clients see.</p><a class="btn hot" href="#/apply">Create a free profile</a></div>`;
+    } else {
+      rest.forEach((p, i) => {
+        html += `<a class="row" href="#/p/${encodeURIComponent(p.id)}">
+          ${avatar(p)}
+          <div class="t"><div class="n">${esc(p.name)} ${badge(p)} ${openDot(p)}</div><div class="d">${esc(p.title)}</div></div>
+          <div class="cat">${esc(catLabel(p))}</div>
+          <div class="rep">Replies ${esc(p.replyIn || "fast")}</div>
+          <div class="p">€${esc(p.priceFrom)}<small>from</small></div>
+        </a>`;
+        if ((i + 1) % every === 0 && i < rest.length - 1) html += adHTML();
+      });
+    }
+    html += `</div>`;
+    document.getElementById("results").innerHTML = html;
+    fillAds();
+  }
+
+  function profile(id) {
+    const p = PEOPLE.find(x => x.id === id);
+    if (!p) { app.innerHTML = `<section class="wrap page-h"><h1>Not found.</h1><p><a href="#/">Back to everyone</a></p></section>`; return; }
+    const pl = plan(p);
+    const work = (p.portfolio || []).filter(w => safeUrl(w.url)).slice(0, LIMIT[pl]);
+    const c = p.contact || {};
+    const tg = String(c.telegram || "").replace(/^@/, "").replace(/[^\w]/g, "");
+    const ig = String(c.instagram || "").replace(/^@/, "").replace(/[^\w.]/g, "");
+    const contacts = [
+      DB && p.hasChat && getMine() !== p.id && `<button class="btn hot" id="chatBtn" type="button">Message ${esc(p.name)}</button>`,
+      DB && p.hasChat && getMine() === p.id && `<a class="btn hot" href="#/inbox">My chats</a>`,
+      tg && `<a class="btn ${DB && p.hasChat ? "ghost" : "hot"}" href="https://t.me/${esc(tg)}" target="_blank" rel="noopener">Message on Telegram</a>`,
+      c.discord && `<button class="btn ghost" data-copy="${esc(c.discord)}">Discord: ${esc(c.discord)}</button>`,
+      ig && `<a class="btn ghost" href="https://instagram.com/${esc(ig)}" target="_blank" rel="noopener">Instagram @${esc(ig)}</a>`,
+      c.email && `<a class="btn ghost" href="mailto:${esc(c.email)}">Email</a>`,
+    ].filter(Boolean);
+    const reportHref = SITE.reportEmail ? `mailto:${esc(SITE.reportEmail)}?subject=${encodeURIComponent("Report: " + p.id)}` : "#/safety";
+    const uc = userColor(p);
+    const head = HAS.header(p) && uc;
+    const best = HAS.best(p) && work[0] ? work[0] : null;
+    const rest = best ? work.slice(1) : work;
+    const host = u => safeUrl(u).replace(/^https?:\/\/(www\.)?/, "").replace(/\/$/, "");
+    const titleBlock = `${avatar(p, true)}
+            <h1>${esc(p.title)}</h1>
+            <div class="meta"><b>${esc(p.name)}</b> ${badge(p)} ${openDot(p)} <span>·</span> <span>${esc(catLabel(p))}</span>${p.country ? ` <span>·</span> <span>${esc(p.country)}</span>` : ""}</div>`;
+    app.innerHTML = `
+      ${head ? `<section class="phead" style="background:${uc};color:${onColor(uc)}"><div class="wrap"><a class="back" href="#/">← All freelancers</a>${titleBlock}</div></section>` : ""}
+      <section class="wrap">
+        ${head ? "" : `<a class="back" href="#/">← All freelancers</a>`}
+        <div class="prof"${uc ? ` style="--acc:${uc}"` : ""}>
+          <div>
+            ${head ? "" : titleBlock}
+            <p class="about">${esc(p.about)}</p>
+            ${(p.skills || []).length ? `<div class="tags">${p.skills.map(s => `<span>${esc(s)}</span>`).join("")}</div>` : ""}
+            ${best ? `<div class="block" id="portfolio"><h2>Best work</h2>
+              <a class="best" href="${esc(safeUrl(best.url))}" target="_blank" rel="noopener nofollow">
+                <div class="best-shot"><iframe src="${esc(safeUrl(best.url))}" loading="lazy" tabindex="-1" sandbox="allow-scripts" title="${esc(best.title || "Best work")}"></iframe></div>
+                <div class="best-cap"><b>${esc(best.title || "Project")} ↗</b><span>${esc(host(best.url))}</span></div>
+              </a></div>` : ""}
+            ${rest.length ? `<div class="block"${best ? "" : ` id="portfolio"`}><h2>${best ? "More work" : "Portfolio"}</h2><div class="work">${rest.map(w => `<a href="${esc(safeUrl(w.url))}" target="_blank" rel="noopener nofollow"><span>${esc(w.title || "Project")} ↗</span><span>${esc(safeUrl(w.url).replace(/^https?:\/\//, "").replace(/\/$/, ""))}</span></a>`).join("")}</div></div>` : ""}
+            ${pl === "free" ? adHTML() : ""}
+          </div>
+          <aside class="side">
+            <div class="price"><small>from </small>€${esc(p.priceFrom)}</div>
+            <div class="facts">
+              <div><span>Replies</span><span>${esc(p.replyIn || "—")}</span></div>
+              <div><span>Languages</span><span>${esc((p.languages || []).join(", ") || "—")}</span></div>
+              <div><span>Member since</span><span>${esc(p.joined || "—")}</span></div>
+            </div>
+            <div class="contacts">${contacts.length ? contacts.join("") : `<p class="note">Contact details coming soon.</p>`}
+              ${work.length ? `<button class="btn ghost hint" id="portBtn" data-hint="view portfolio" aria-label="View portfolio">Portfolio</button>` : ""}
+              ${HAS.story(p) ? `<button class="btn ghost" id="storyBtn">Save story card</button>` : ""}</div>
+            <p class="warn">Agree on the price and deadline before starting. For new clients, pay half first and half when it's done. ${p.fromDb ? `<a href="#" id="reportBtn">Report this profile</a>` : `<a href="${reportHref}">Report this profile</a>`}</p>
+            ${getMine() === p.id ? `<div class="mine-tools"><span>This is your profile</span>${getToken() ? `<button id="delMine" type="button">Delete my profile</button>` : ""}</div>` : ""}
+          </aside>
+        </div>
+      </section>`;
+    app.querySelectorAll("[data-copy]").forEach(b => b.addEventListener("click", async () => {
+      try { await navigator.clipboard.writeText(b.dataset.copy); toast("Discord name copied"); } catch (e) { toast(b.dataset.copy); }
+    }));
+    const cb = document.getElementById("chatBtn");
+    if (cb) cb.addEventListener("click", () => startChat(p));
+    const dm = document.getElementById("delMine");
+    if (dm) dm.addEventListener("click", async () => {
+      if (!confirm("Delete your profile forever? This can't be undone.")) return;
+      dm.disabled = true; dm.textContent = "Deleting…";
+      try { if (await deleteMine()) { toast("Profile deleted"); location.hash = "#/"; return; } } catch (x) {}
+      dm.disabled = false; dm.textContent = "Delete my profile"; toast("Couldn't delete. Try again.");
+    });
+    const rb = document.getElementById("reportBtn");
+    if (rb) rb.addEventListener("click", async e => {
+      e.preventDefault();
+      const key = "reported:" + p.id;
+      try { if (localStorage.getItem(key)) { toast("You already reported this profile"); return; } } catch (x) {}
+      const reason = prompt("What's wrong with this profile? (scam, fake, rude…)");
+      if (reason === null) return;
+      try {
+        await db("reports", { method: "POST", body: JSON.stringify({ slug: p.id, reason: reason.slice(0, 300) }), headers: { Prefer: "return=minimal" } });
+        try { localStorage.setItem(key, "1"); } catch (x) {}
+        toast("Thanks. We'll take a look.");
+      } catch (x) { toast("Couldn't send. Try again later."); }
+    });
+    const pb = document.getElementById("portBtn");
+    if (pb) pb.addEventListener("click", () => {
+      const t = document.getElementById("portfolio");
+      if (t) window.scrollTo({ top: t.getBoundingClientRect().top + scrollY - 80, behavior: "smooth" });
+    });
+    const sb = document.getElementById("storyBtn");
+    if (sb) sb.addEventListener("click", () => storyCard(p));
+  }
+
+  // 1080x1920 picture for Instagram / TikTok stories
+  async function storyCard(p) {
+    await document.fonts.ready;
+    const W = 1080, H = 1920, c = document.createElement("canvas"); c.width = W; c.height = H;
+    const x = c.getContext("2d");
+    const bg = userColor(p) || "#141414", fg = onColor(bg);
+    x.fillStyle = bg; x.fillRect(0, 0, W, H);
+    const F = (w, s) => w >= 800 ? `400 ${s}px "Instrument Serif", serif` : `${w} ${s}px "Instrument Sans", sans-serif`;
+    const M = s => `600 ${s}px "Instrument Sans", sans-serif`;
+    x.fillStyle = fg; x.textBaseline = "alphabetic";
+    x.font = F(800, 52); x.fillText((SITE.name || "freshhands"), 90, 160);
+    x.fillStyle = fg; x.fillRect(60, 132, 18, 18);
+    // avatar
+    const ac = userColor(p) ? fg : color(p.id || p.name);
+    x.fillStyle = ac; x.beginPath(); x.arc(170, 520, 110, 0, Math.PI * 2); x.fill();
+    x.fillStyle = ac === "#ffffff" ? bg : "#ffffff";
+    x.font = F(800, 96); x.textAlign = "center"; x.fillText(initials(p.name), 170, 553); x.textAlign = "left";
+    x.fillStyle = fg; x.font = F(700, 60); x.fillText(p.name, 90, 740);
+    x.font = M(30); x.globalAlpha = .7; x.fillText(`${catLabel(p).toUpperCase()}  ·${plan(p).toUpperCase()}`, 90, 800); x.globalAlpha = 1;
+    // title, wrapped
+    x.font = F(800, 110);
+    const words = String(p.title).split(/\s+/); let line = "", y = 1000; const lines = [];
+    for (const w of words) { const t = line ? line + " " + w : w; if (x.measureText(t).width > W - 180 && line) { lines.push(line); line = w; } else line = t; }
+    if (line) lines.push(line);
+    lines.slice(0, 5).forEach((l, i) => x.fillText(l, 90, y + i * 112));
+    y += Math.min(lines.length, 5) * 112 + 60;
+    x.font = F(800, 90); x.fillText(`from €${p.priceFrom}`, 90, y + 40);
+    if (HAS.open(p)) { x.fillStyle = "#22c55e"; x.beginPath(); x.arc(108, y + 120, 16, 0, Math.PI * 2); x.fill(); x.fillStyle = fg; x.font = M(36); x.fillText("AVAILABLE FOR WORK", 140, y + 133); }
+    // footer
+    x.fillStyle = fg; x.globalAlpha = .25; x.fillRect(90, H - 260, W - 180, 3); x.globalAlpha = 1;
+    x.font = M(34); x.fillText("HIRE ME →", 90, H - 180);
+    const link = location.protocol.startsWith("http") ? (location.host + location.pathname).replace(/index\.html$/, "").replace(/\/$/, "") + "/#/p/" + p.id : "";
+    x.font = F(700, 46); x.fillText(link.length < 44 ? link : (SITE.name || "freshhands"), 90, H - 110);
+    c.toBlob(async blob => {
+      const file = new File([blob], `${p.id}-story.png`, { type: "image/png" });
+      try { if (navigator.canShare && navigator.canShare({ files: [file] })) { await navigator.share({ files: [file] }); return; } } catch (e) { if (e.name === "AbortError") return; }
+      const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = file.name; document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 4000); toast("Story card saved");
+    }, "image/png");
+    fillAds();
+  }
+
+  function plans() {
+    const join = safeUrl(SITE.joinFormUrl);
+    const links = SITE.payLinks || {};
+    app.innerHTML = `
+      <section class="wrap page-h">
+        <h1>Put yourself out there.</h1>
+        <p>Clients use the site for free. Freelancers start free and upgrade to be seen first.</p>
+        <div class="plans">
+          ${PLANS.map(pl => {
+            // Stripe Payment Links accept client_reference_id: it shows in Stripe which profile paid
+            const payUrl = safeUrl(links[pl.id]), mine = getMine();
+            const href = pl.id === "free" ? (join || "#/apply")
+              : payUrl && mine ? payUrl + (payUrl.includes("?") ? "&" : "?") + "client_reference_id=" + encodeURIComponent(mine) : payUrl;
+            const label = pl.id === "free" ? "Join for free" : `Get ${pl.name}`;
+            const ext = /^https?:/.test(href) ? ` target="_blank" rel="noopener"` : "";
+            return `<div class="plan ${pl.id}">
+              ${pl.tag ? `<span class="tagp">${pl.tag}</span>` : ""}
+              <h3>${pl.name}</h3>
+              <div class="amt">${pl.price}<small> ${pl.per}</small></div>
+              <div class="pm">${pl.month}</div>
+              <ul>${pl.feats.map(f => `<li>${f}</li>`).join("")}</ul>
+              ${href ? `<a class="btn${pl.id === "free" ? " hot" : ""}" href="${esc(href)}"${ext}>${label}</a>`
+                     : `<span class="btn${pl.id === "free" ? " ghost" : ""}" aria-disabled="true">Opening soon</span>`}
+            </div>`;
+          }).join("")}
+        </div>
+        <p class="note">Start free. Upgrade when you want. Cancel any time. ${getMine() ? "" : "Create your free profile first, then come back here to upgrade it. "}<a href="#/terms">Terms &amp; refunds</a></p>
+        <div class="compare">
+          <h2>Every plan costs less than €0.50 a month.</h2>
+          <p class="note">Billed once a year. No hidden fees, no commission on your work.</p>
+        </div>
+      </section>`;
+  }
+
+  function apply() {
+    const mine = getMine();
+    if (mine) {
+      app.innerHTML = `
+        <section class="wrap page-h">
+          <h1>You already have a profile.</h1>
+          <p>You're signed in on this device. Want to change something? Email ${SITE.reportEmail ? `<a href="mailto:${esc(SITE.reportEmail)}?subject=${encodeURIComponent("Change my profile: " + mine)}">${esc(SITE.reportEmail)}</a>` : "us"} from the address you signed up with.</p>
+          <p style="margin-top:24px;display:flex;gap:10px;flex-wrap:wrap"><a class="btn hot" href="#/p/${encodeURIComponent(mine)}">Open my profile</a><a class="btn ghost" href="#/plans">Upgrade</a></p>
+        </section>`;
+      return;
+    }
+    const to = String(SITE.applyEmail || "").trim();
+    app.innerHTML = `
+      <section class="wrap page-h">
+        <h1>Join for free.</h1>
+        <p>${DB ? "Tell us what you do. Your profile goes live the moment you press publish." : "Tell us what you do. We'll put you on the site in a day or two."}</p>
+      </section>
+      <section class="wrap">
+        <form class="form" id="applyForm" novalidate>
+          <p class="lead">Everything is required unless it says <em class="opt" style="margin:0">optional</em>.</p>
+          <label>Your name or nickname<input name="name" required maxlength="40" autocomplete="nickname"></label>
+          <label>Email<input name="email" type="email" required maxlength="80" autocomplete="email"><small>Only we see it.</small></label>
+          <label>What do you do?
+            <input name="category" list="catList" required maxlength="30" placeholder="Pick from the list or type your own" autocomplete="off">
+            <datalist id="catList">${CATS.filter(c => c[0] !== "other").map(([, n]) => `<option value="${n}"></option>`).join("")}</datalist>
+            <small>For example: Design, Video editing, or your own like "Nail art".</small>
+          </label>
+          <label>One line about your service<input name="title" required maxlength="70" placeholder="Logos and banners for small brands"></label>
+          <label>About you <em class="opt">optional</em><textarea name="about" rows="4" maxlength="400" placeholder="A few words about you and your work."></textarea></label>
+          <label>Skills <em class="opt">optional</em><input name="skills" maxlength="120" placeholder="Figma, Photoshop, Logos"><small>Separate with commas.</small></label>
+          <div class="two">
+            <label>Price from (€)<input name="priceFrom" type="number" min="1" max="999" required inputmode="numeric" placeholder="10"></label>
+            <label>You reply
+              <select name="replyIn"><option>within an hour</option><option selected>same day</option><option>in 1–2 days</option></select>
+            </label>
+          </div>
+          <label>Languages <em class="opt">optional</em><input name="languages" maxlength="80" placeholder="English, Russian"></label>
+          <label>Links to your work <em class="opt">optional</em><textarea name="portfolio" rows="3" maxlength="600" placeholder="https://...&#10;https://..."></textarea><small>One link per line.</small></label>
+          <fieldset class="group">
+            <legend>How clients reach you <em class="req">fill at least one</em></legend>
+            <div class="two">
+              <label>Telegram<input name="telegram" maxlength="40" placeholder="@name"></label>
+              <label>Discord<input name="discord" maxlength="40" placeholder="name"></label>
+            </div>
+            <label>Instagram<input name="instagram" maxlength="40" placeholder="@name"></label>
+          </fieldset>
+          <label class="check"><input type="checkbox" name="ok" required> I'm 13 or older. If I'm under 18, a parent knows I'm doing this.</label>
+          <p class="err" id="err"></p>
+          <button class="btn hot" type="submit">${DB ? "Publish my profile" : "Send application"}</button>
+          ${DB || to ? "" : `<p class="note">Applications open very soon.</p>`}
+        </form>
+      </section>`;
+    const f = document.getElementById("applyForm");
+    f.addEventListener("submit", async e => {
+      e.preventDefault();
+      const d = Object.fromEntries(new FormData(f).entries());
+      const err = document.getElementById("err");
+      if (!d.name || !d.title || !d.priceFrom || !/^\S+@\S+\.\S+$/.test(d.email || "")) { err.textContent = "Please fill in name, email, service and price."; return; }
+      if (!d.telegram && !d.discord && !d.instagram) { err.textContent = "Add at least one contact (Telegram, Discord or Instagram)."; return; }
+      if (!d.ok) { err.textContent = "Please tick the age box."; return; }
+      const catText = String(d.category || "").trim();
+      if (catText.length < 2) { err.textContent = "Write or pick what you do."; return; }
+      if (!isClean(d.name, d.title, d.about, d.skills, d.languages, catText, d.telegram, d.discord, d.instagram)) { err.textContent = CLEAN_MSG; return; }
+      const known = CATS.find(([id, n]) => id !== "other" && (norm(n) === norm(catText) || id === norm(catText)));
+      d.category = known ? known[0] : "other";
+      d.customCategory = known ? "" : catText.slice(0, 30);
+      if (DB) {
+        err.textContent = "";
+        const btn = f.querySelector("button[type=submit]"); btn.disabled = true; btn.textContent = "Publishing…";
+        const list = s => String(s || "").split(",").map(x => x.trim()).filter(Boolean).slice(0, 15).map(x => x.slice(0, 40));
+        const slug = ((d.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 30)) || "user") + "-" + Math.random().toString(36).slice(2, 7);
+        const row = {
+          slug, name: d.name.trim().slice(0, 40), email: d.email.trim().slice(0, 80), category: d.category,
+          ...(d.customCategory ? { custom_category: d.customCategory } : {}),
+          title: d.title.trim().slice(0, 70), about: (d.about || "").trim().slice(0, 400),
+          skills: list(d.skills), languages: list(d.languages).slice(0, 8),
+          price_from: Math.min(999, Math.max(1, Math.round(Number(d.priceFrom)) || 1)), reply_in: d.replyIn,
+          portfolio: String(d.portfolio || "").split(/\s+/).filter(u => /^https?:\/\//i.test(u) && u.length < 300).slice(0, 12).map(u => ({ title: u.replace(/^https?:\/\/(www\.)?/, "").split("/")[0], url: u })),
+          contact: { telegram: (d.telegram || "").replace(/^@/, "").slice(0, 40), discord: (d.discord || "").slice(0, 40), instagram: (d.instagram || "").replace(/^@/, "").slice(0, 40) },
+          owner_token: [...crypto.getRandomValues(new Uint8Array(16))].map(b => b.toString(16).padStart(2, "0")).join(""),
+        };
+        try {
+          await db("profiles", { method: "POST", body: JSON.stringify(row), headers: { Prefer: "return=minimal" } });
+          setMine(slug, row.owner_token);
+          await loadPeople();
+          location.hash = "#/p/" + slug;
+          setTimeout(() => toast("You're live! Share your profile link."), 300);
+        } catch (x) {
+          btn.disabled = false; btn.textContent = "Publish my profile";
+          err.textContent = /keep it clean|category/i.test(String(x && x.message)) ? errText(x) : "Couldn't publish. Check your answers and try again.";
+        }
+        return;
+      }
+      if (!to) { err.textContent = "Applications aren't open yet. Try again in a few days."; return; }
+      err.textContent = "";
+      const list = s => String(s || "").split(",").map(x => x.trim()).filter(Boolean);
+      const id = (d.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "user") + "-" + Math.random().toString(36).slice(2, 5);
+      const profileObj = {
+        id, name: d.name.trim(), plan: "free", category: d.category, title: d.title.trim(), about: (d.about || "").trim(),
+        skills: list(d.skills), priceFrom: Number(d.priceFrom), languages: list(d.languages), replyIn: d.replyIn,
+        portfolio: String(d.portfolio || "").split(/\s+/).filter(u => /^https?:\/\//i.test(u)).slice(0, 12).map(u => ({ title: u.replace(/^https?:\/\/(www\.)?/, "").split("/")[0], url: u })),
+        contact: { telegram: (d.telegram || "").replace(/^@/, ""), discord: d.discord || "", instagram: (d.instagram || "").replace(/^@/, ""), email: "" },
+        joined: new Date().toISOString().slice(0, 10)
+      };
+      const body = `New freelancer application\n\nEmail: ${d.email}\n\nPaste this into data.js:\n\n${JSON.stringify(profileObj, null, 2)},\n`;
+      location.href = `mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent("Join: " + profileObj.name)}&body=${encodeURIComponent(body)}`;
+      app.querySelector(".page-h").innerHTML = `<h1>Almost done.</h1><p>Your email app has opened with your application. Press send to finish. We review every application within two days.</p>`;
+      window.scrollTo(0, 0);
+    });
+  }
+
+  function safety() {
+    app.innerHTML = `
+      <section class="wrap page-h"><h1>Stay safe.</h1></section>
+      <section class="wrap text">
+        <p>${esc(SITE.name || "freshhands")} is a list of freelancers. Clients and freelancers talk and pay each other directly. We don't hold money and we don't take a cut.</p>
+        <h2>For clients</h2>
+        <ul>
+          <li>Look at their work links before you message.</li>
+          <li>Agree on price, deadline and number of changes in writing.</li>
+          <li>For a first job, pay half up front and half when it's delivered.</li>
+        </ul>
+        <h2>For freelancers</h2>
+        <ul>
+          <li>Never share passwords, your home address or ID.</li>
+          <li>Never pay a client to "unlock" a job. That's a scam, every time.</li>
+          <li>Under 18? Have a parent check any deal that involves money.</li>
+        </ul>
+        <h2>Report a problem</h2>
+        <p>${SITE.reportEmail ? `Email <a href="mailto:${esc(SITE.reportEmail)}">${esc(SITE.reportEmail)}</a> with the profile link. We remove scammers fast.` : `Use the "Report this profile" link on any profile.`}</p>
+      </section>`;
+  }
+
+  function terms() {
+    const o = SITE.owner || {};
+    app.innerHTML = `
+      <section class="wrap page-h"><h1>Terms &amp; refunds.</h1></section>
+      <section class="wrap text">
+        ${(() => {
+          const real = v => v && !/^\[/.test(v);
+          const mail = real(o.email) ? o.email : SITE.reportEmail;
+          const who = real(o.name) ? `${esc(o.name)}${real(o.country) ? ", " + esc(o.country) : ""}` : esc(SITE.name || "freshhands");
+          return `<p>This site is run by ${who}.${mail ? ` Contact: <a href="mailto:${esc(mail)}">${esc(mail)}</a>.` : ""}</p>`;
+        })()}
+        <h2>What you pay for</h2>
+        <p>Paid plans (Basic €0.99, Pro €2, Ultra €5 per year) change how your profile is shown on this site. They do not guarantee clients or income.</p>
+        <h2>Billing</h2>
+        <p>Plans are billed yearly through Stripe and renew automatically. You can cancel any time from the link in your Stripe receipt; your plan stays active until the end of the paid year.</p>
+        <h2>Refunds</h2>
+        <p>Not happy? Ask for a full refund within 14 days of paying. Email us with the address you paid with.</p>
+        <h2>Profiles</h2>
+        <p>We check every profile by hand and can remove any profile that is fake, rude, a scam, or breaks the law. If a paid profile is removed for breaking these rules, there is no refund.</p>
+        <h2>Deals between users</h2>
+        <p>Clients and freelancers deal with each other directly. We are not part of the deal and are not responsible for the work, payments or disputes between users.</p>
+        <h2>Privacy</h2>
+        <p>We only store what you put in your profile. This site doesn't use accounts. If ads are turned on, Google may use cookies to show them.</p>
+      </section>`;
+  }
+
+  // ---------- router ----------
+  // ================= CHAT =================
+  const rpc = (fn, args) => db("rpc/" + fn, { method: "POST", body: JSON.stringify(args) });
+  const THREADS = "freshhands:threads";
+  function myThreads() { try { return JSON.parse(localStorage.getItem(THREADS) || "[]"); } catch (e) { return []; } }
+  function saveThread(t) {
+    const list = myThreads().filter(x => x.id !== t.id); list.unshift({ ...myThreads().find(x => x.id === t.id), ...t });
+    try { localStorage.setItem(THREADS, JSON.stringify(list.slice(0, 100))); } catch (e) {}
+    updateNav();
+  }
+  const fmtSize = n => n > 1048576 ? (n / 1048576).toFixed(1) + " MB" : Math.max(1, Math.round(n / 1024)) + " KB";
+  const fmtTime = s => { const d = new Date(s), now = new Date(); const t = d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }); return d.toDateString() === now.toDateString() ? t : d.toLocaleDateString([], { day: "numeric", month: "short" }) + ", " + t; };
+  const errText = e => { const m = String(e && e.message || e).match(/"message":"([^"]+)"/); return m ? m[1] : "Something went wrong. Try again."; };
+  let chatTimer = null;
+
+  function startChat(p) {
+    const old = myThreads().find(t => t.slug === p.id && t.role === "client");
+    if (old) { location.hash = "#/chat/" + old.id; return; }
+    const m = modal(`
+      <h3>Message ${esc(p.name)}</h3>
+      <p>Say what you need, your deadline and budget. ${esc(p.name)} will reply here.</p>
+      <form class="form" id="startForm" style="margin-top:0">
+        <label>Your name<input name="name" required maxlength="40" autocomplete="nickname"></label>
+        <label>Message<textarea name="body" rows="4" required maxlength="2000" placeholder="Hi! I need a logo for my YouTube channel by Friday. Budget about €15."></textarea></label>
+        <p class="err" id="startErr"></p>
+        <div class="modal-actions"><button class="btn hot" type="submit">Send</button><button class="btn ghost" type="button" data-close>Cancel</button></div>
+      </form>`);
+    m.querySelector("#startForm").addEventListener("submit", async e => {
+      e.preventDefault();
+      const f = e.target, name = f.name.value.trim(), body = f.body.value.trim(), btn = f.querySelector("[type=submit]");
+      if (!name || !body) { m.querySelector("#startErr").textContent = "Write your name and a message."; return; }
+      if (!isClean(name, body)) { m.querySelector("#startErr").textContent = CLEAN_MSG; return; }
+      btn.disabled = true; btn.textContent = "Sending…";
+      try {
+        const r = await rpc("chat_start", { p_slug: p.id, p_name: name, p_body: body });
+        saveThread({ id: r.id, token: r.token, slug: p.id, with: p.name, role: "client", at: new Date().toISOString() });
+        m.remove(); location.hash = "#/chat/" + r.id;
+      } catch (x) { btn.disabled = false; btn.textContent = "Send"; m.querySelector("#startErr").textContent = errText(x); }
+    });
+  }
+
+  function chatToken(id, fromUrl) {
+    if (fromUrl) return fromUrl;
+    const t = myThreads().find(x => x.id === id);
+    return t ? t.token : getToken();
+  }
+
+  async function chatPage(id, urlToken) {
+    if (!DB) { app.innerHTML = `<section class="wrap page-h"><h1>Chat is off.</h1></section>`; return; }
+    const token = chatToken(id, urlToken);
+    const S = { id, token, after: 0, msgs: [], dels: [], previews: {}, role: "", info: null, reply: null, selecting: false, selected: new Set() };
+    app.innerHTML = `
+      <section class="wrap chat">
+        <a class="back" href="#/inbox">← My chats</a>
+        <div class="chat-head" id="chatHead"><p class="note">Loading…</p></div>
+        <div class="chat-log" id="chatLog" aria-live="polite"></div>
+        <div class="chat-bar">
+          <div class="selbar hidden" id="selBar"><span id="selCount">0 selected</span><button class="btn ghost" id="selCopy" type="button">Copy</button><button class="btn danger" id="selDel" type="button">Delete</button><button class="btn ghost" id="selCancel" type="button">Cancel</button></div>
+          <div class="replybar hidden" id="replyBar"><div><b>Reply</b><span id="replyText"></span></div><button type="button" id="replyX" aria-label="Cancel reply">×</button></div>
+          <button class="btn ghost hidden" id="upBtn" type="button">Upload work</button>
+          <form class="chat-form" id="chatForm">
+            <textarea id="chatIn" rows="1" maxlength="2000" placeholder="Write a message…" aria-label="Message"></textarea>
+            <button class="btn hot" type="submit">Send</button>
+          </form>
+        </div>
+      </section>`;
+    const log = document.getElementById("chatLog"), input = document.getElementById("chatIn");
+
+    async function load(first) {
+      let r;
+      try { r = await rpc("chat_get", { p_thread: id, p_token: token, p_after: 0 }); }
+      catch (e) {
+        if (first) app.innerHTML = `<section class="wrap page-h"><h1>Can't open this chat.</h1><p>This chat link doesn't work on this device. Ask the other person to send you the chat link again.</p></section>`;
+        return;
+      }
+      if (first) {
+        S.role = r.role; S.info = r;
+        if (r.role === "client") saveThread({ id, token, slug: r.slug, with: r.freelancer, role: "client" });
+        const other = r.role === "client" ? r.freelancer : r.client_name;
+        document.getElementById("chatHead").innerHTML = `
+          <div><h1>${esc(other)}</h1><p class="note">${r.role === "client" ? esc(r.title) : "Client · chat about your service"}</p></div>
+          ${r.role === "client" ? `<button class="btn ghost" id="copyLink" type="button">Copy chat link</button>` : `<a class="btn ghost" href="#/p/${encodeURIComponent(r.slug)}">My profile</a>`}`;
+        const cl = document.getElementById("copyLink");
+        if (cl) cl.addEventListener("click", async () => {
+          const link = location.href.split("#")[0] + "#/chat/" + id + "/" + token;
+          try { await navigator.clipboard.writeText(link); toast("Link copied. Keep it private: anyone with it can read this chat."); } catch (e) { prompt("Copy this link:", link); }
+        });
+        if (r.role === "freelancer") { const ub = document.getElementById("upBtn"); ub.classList.remove("hidden"); ub.addEventListener("click", () => deliverDialog(S, () => load(false))); }
+      }
+      let changed = false;
+      if (JSON.stringify(r.messages) !== JSON.stringify(S.msgs)) { S.msgs = r.messages; changed = true; }
+      if (JSON.stringify(r.deliveries) !== JSON.stringify(S.dels)) { S.dels = r.deliveries; changed = true; }
+      for (const d of S.dels) if (d.has_preview && !(d.id in S.previews)) {
+        S.previews[d.id] = null;
+        rpc("chat_preview", { p_thread: id, p_token: token, p_delivery: d.id }).then(src => { S.previews[d.id] = src; draw(); }).catch(() => {});
+      }
+      if (changed) draw();
+    }
+
+    function deliveryCard(d) {
+      const prev = S.previews[d.id];
+      const ext = (d.name.split(".").pop() || "file").slice(0, 5).toUpperCase();
+      const price = "€" + Number(d.price).toFixed(Number(d.price) % 1 ? 2 : 0);
+      let actions = "";
+      if (S.role === "client") {
+        if (d.status === "unlocked") actions = `<button class="btn hot" data-dl="${d.id}">Download</button>`;
+        else if (d.pay_clicked) actions = `<p class="note">Waiting for ${esc(S.info.freelancer)} to confirm your payment. The download unlocks right after.</p>${d.pay_link ? `<button class="btn ghost" data-pay="${d.id}">Open payment link again</button>` : ""}`;
+        else actions = d.pay_link ? `<button class="btn hot" data-pay="${d.id}">Pay ${price}</button>` : `<p class="note">Ask ${esc(S.info.freelancer)} how to pay.</p>`;
+      } else {
+        actions = d.status === "unlocked" ? `<p class="note">Unlocked. The client can download it.</p>`
+          : `${d.pay_clicked ? `<p class="note"><b>The client went to pay.</b> Check that the money arrived, then unlock.</p>` : `<p class="note">Waiting for the client to pay.</p>`}<button class="btn hot" data-unlock="${d.id}">Payment received — unlock</button>`;
+        actions += `<button class="btn ghost" data-dl="${d.id}">Download my file</button>`;
+      }
+      return `<div class="dcard ${d.status}">
+        <div class="dshot${prev ? " guarded" : ""}"${prev ? ` data-view="${d.id}" title="Click to view"` : ""}>${prev ? `<img src="${esc(prev)}" alt="Preview of ${esc(d.name)}" draggable="false">` : `<span>${esc(ext)}</span>`}
+          ${d.status === "locked" ? `<i class="lock">Locked</i>` : `<i class="lock open">Unlocked</i>`}</div>
+        <div class="dbody"><b>${esc(d.name)}</b><span class="note">${fmtSize(d.size)} · ${price}</span>${actions}</div>
+      </div>`;
+    }
+
+    function draw() {
+      const near = log.scrollHeight - log.scrollTop - log.clientHeight < 120;
+      const byId = Object.fromEntries(S.msgs.map(m => [m.id, m]));
+      const msgHtml = m => {
+        if (m.sender === "system") return `<div class="msg sys">${esc(m.body)}<time>${fmtTime(m.at)}</time></div>`;
+        const q = m.reply_to && byId[m.reply_to];
+        const quote = q ? `<div class="quote" data-jump="${q.id}"><b>${q.sender === S.role ? "You" : esc(q.sender === "client" ? S.info.client_name : S.info.freelancer)}</b>${q.deleted ? "<i>Deleted message</i>" : esc(q.body.slice(0, 120))}</div>` : "";
+        const sel = S.selecting ? `<input type="checkbox" class="pick" ${S.selected.has(m.id) ? "checked" : ""} aria-label="Select message">` : "";
+        return `<div class="msg ${m.sender === S.role ? "me" : "them"}${m.deleted ? " gone" : ""}${S.selected.has(m.id) ? " picked" : ""}" data-mid="${m.id}" id="m${m.id}">${sel}${quote}
+          <p>${m.deleted ? "<i>Message deleted</i>" : esc(m.body).replace(/\n/g, "<br>")}</p><time>${fmtTime(m.at)}${m.edited && !m.deleted ? " · edited" : ""}</time></div>`;
+      };
+      const items = S.msgs.map(m => ({ at: m.at, html: msgHtml(m) }))
+        .concat(S.dels.map(d => ({ at: d.at, html: deliveryCard(d) })))
+        .sort((a, b) => new Date(a.at) - new Date(b.at));
+      log.innerHTML = items.map(i => i.html).join("") || `<p class="note">No messages yet.</p>`;
+      if (near || !draw.done) { log.scrollTop = log.scrollHeight; draw.done = true; }
+    }
+    draw.done = false;
+
+    log.addEventListener("click", async e => {
+      const view = e.target.closest("[data-view]");
+      if (view && S.previews[view.dataset.view]) {
+        const d = S.dels.find(x => x.id === view.dataset.view);
+        modal(`<div class="viewer guarded"><img src="${esc(S.previews[view.dataset.view])}" alt="Preview" draggable="false"></div>
+          <p class="note" style="margin:12px 0">Preview only. ${d && d.status === "unlocked" ? "Download the full file from the chat." : "The full file unlocks after payment."}</p>
+          <div class="modal-actions"><button class="btn ghost" data-close>Close</button></div>`).querySelector(".modal-box").classList.add("wide");
+        return;
+      }
+      const pay = e.target.closest("[data-pay]"), un = e.target.closest("[data-unlock]"), dl = e.target.closest("[data-dl]");
+      if (pay) payDialog(S, S.dels.find(d => d.id === pay.dataset.pay), () => load(false));
+      if (un) {
+        if (!confirm("Did the money really arrive? After unlocking, the client can download the file.")) return;
+        un.disabled = true;
+        try { await rpc("chat_unlock", { p_thread: id, p_token: token, p_delivery: un.dataset.unlock }); await load(false); toast("Unlocked"); }
+        catch (x) { un.disabled = false; toast(errText(x)); }
+      }
+      if (dl) {
+        dl.disabled = true; const old = dl.textContent; dl.textContent = "Downloading…";
+        try {
+          const f = await rpc("chat_download", { p_thread: id, p_token: token, p_delivery: dl.dataset.dl });
+          if (!f) throw new Error("locked");
+          const bin = atob(f.data), arr = new Uint8Array(bin.length);
+          for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+          const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([arr], { type: f.mime || "application/octet-stream" }));
+          a.download = f.name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+        } catch (x) { toast("Couldn't download."); }
+        dl.disabled = false; dl.textContent = old;
+      }
+    });
+
+    document.getElementById("chatForm").addEventListener("submit", async e => {
+      e.preventDefault();
+      const body = input.value.trim(); if (!body) return;
+      if (!isClean(body)) { toast(CLEAN_MSG); return; }
+      input.value = ""; input.style.height = "";
+      const reply = S.reply; setReply(null);
+      try { await rpc("chat_send", { p_thread: id, p_token: token, p_body: body, p_reply: reply }); await load(false); }
+      catch (x) { input.value = body; setReply(reply); toast(errText(x)); }
+    });
+
+    // ----- message menu: right click (computer) or long press (phone) -----
+    const msgOf = el => { const b = el && el.closest(".msg[data-mid]"); return b ? S.msgs.find(m => m.id === Number(b.dataset.mid)) : null; };
+    const mine = m => m.sender === S.role;
+    function setReply(mid) {
+      S.reply = mid;
+      const bar = document.getElementById("replyBar"), m = S.msgs.find(x => x.id === mid);
+      bar.classList.toggle("hidden", !m);
+      if (m) { document.getElementById("replyText").textContent = m.body.slice(0, 100); input.focus(); }
+    }
+    document.getElementById("replyX").addEventListener("click", () => setReply(null));
+    function closeMenu() { document.querySelectorAll(".ctx").forEach(x => x.remove()); }
+    function openMenu(m, x, y) {
+      closeMenu();
+      const items = [
+        !m.deleted && ["reply", "Reply"],
+        ["info", "Info"],
+        !m.deleted && mine(m) && ["edit", "Edit"],
+        !m.deleted && ["copy", "Copy"],
+        !m.deleted && mine(m) && ["delete", "Delete"],
+        ["select", "Select"],
+      ].filter(Boolean);
+      const menu = document.createElement("div");
+      menu.className = "ctx"; menu.setAttribute("role", "menu");
+      menu.innerHTML = items.map(([a, t]) => `<button role="menuitem" data-a="${a}" class="${a === "delete" ? "danger-t" : ""}">${t}</button>`).join("");
+      document.body.appendChild(menu);
+      const w = menu.offsetWidth, h = menu.offsetHeight;
+      menu.style.left = Math.max(8, Math.min(x, innerWidth - w - 8)) + "px";
+      menu.style.top = Math.max(8, Math.min(y, innerHeight - h - 8)) + "px";
+      menu.addEventListener("click", ev => { const b = ev.target.closest("[data-a]"); if (b) { closeMenu(); act(b.dataset.a, m); } });
+      menu.querySelector("button").focus();
+    }
+    async function act(a, m) {
+      if (a === "reply") setReply(m.id);
+      if (a === "copy") { try { await navigator.clipboard.writeText(m.body); toast("Copied"); } catch (e) { toast("Couldn't copy"); } }
+      if (a === "info") {
+        const who = mine(m) ? "You" : (m.sender === "client" ? S.info.client_name : S.info.freelancer);
+        modal(`<h3>Message info</h3><div class="facts" style="margin:16px 0">
+          <div><span>From</span><span>${esc(who)}</span></div>
+          <div><span>Sent</span><span>${esc(new Date(m.at).toLocaleString())}</span></div>
+          ${m.edited ? `<div><span>Edited</span><span>${esc(new Date(m.edited).toLocaleString())}</span></div>` : ""}
+          ${m.deleted ? `<div><span>Status</span><span>Deleted</span></div>` : ""}
+          <div><span>Length</span><span>${m.body.length} characters</span></div></div>
+          <div class="modal-actions"><button class="btn ghost" data-close>Close</button></div>`);
+      }
+      if (a === "edit") {
+        const md = modal(`<h3>Edit message</h3><form class="form" id="editForm" style="margin-top:12px"><textarea name="body" rows="4" maxlength="2000"></textarea><p class="err" id="editErr"></p>
+          <div class="modal-actions"><button class="btn hot" type="submit">Save</button><button class="btn ghost" type="button" data-close>Cancel</button></div></form>`);
+        const f = md.querySelector("#editForm"); f.body.value = m.body; f.body.focus();
+        f.addEventListener("submit", async ev => {
+          ev.preventDefault();
+          const body = f.body.value.trim();
+          if (!body) return;
+          if (!isClean(body)) { md.querySelector("#editErr").textContent = CLEAN_MSG; return; }
+          try { await rpc("chat_edit", { p_thread: id, p_token: token, p_id: m.id, p_body: body }); md.remove(); await load(false); }
+          catch (x) { md.querySelector("#editErr").textContent = errText(x); }
+        });
+      }
+      if (a === "delete") await removeMsgs([m.id]);
+      if (a === "select") { S.selecting = true; S.selected = new Set([m.id]); updateSel(); draw(); }
+    }
+    async function removeMsgs(ids) {
+      const own = ids.filter(i => { const m = S.msgs.find(x => x.id === i); return m && mine(m) && !m.deleted; });
+      if (!own.length) { toast("You can only delete your own messages"); return; }
+      if (!confirm(own.length === 1 ? "Delete this message for everyone?" : `Delete ${own.length} messages for everyone?`)) return;
+      try { await rpc("chat_delete", { p_thread: id, p_token: token, p_ids: own }); toast("Deleted"); await load(false); }
+      catch (x) { toast(errText(x)); }
+    }
+    function updateSel() {
+      document.getElementById("selBar").classList.toggle("hidden", !S.selecting);
+      document.getElementById("selCount").textContent = S.selected.size + " selected";
+    }
+    function stopSel() { S.selecting = false; S.selected.clear(); updateSel(); draw(); }
+    document.getElementById("selCancel").addEventListener("click", stopSel);
+    document.getElementById("selCopy").addEventListener("click", async () => {
+      const text = S.msgs.filter(m => S.selected.has(m.id) && !m.deleted).map(m => m.body).join("\n\n");
+      try { await navigator.clipboard.writeText(text); toast("Copied"); } catch (e) { toast("Couldn't copy"); }
+      stopSel();
+    });
+    document.getElementById("selDel").addEventListener("click", async () => { await removeMsgs([...S.selected]); stopSel(); });
+
+    log.addEventListener("contextmenu", e => { const m = msgOf(e.target); if (!m || S.selecting) return; e.preventDefault(); openMenu(m, e.clientX, e.clientY); });
+    let pressT = null;
+    log.addEventListener("touchstart", e => {
+      const m = msgOf(e.target); if (!m || S.selecting) return;
+      const t = e.touches[0];
+      pressT = setTimeout(() => { pressT = null; if (navigator.vibrate) navigator.vibrate(15); openMenu(m, t.clientX, t.clientY); }, 500);
+    }, { passive: true });
+    ["touchend", "touchmove", "touchcancel"].forEach(ev => log.addEventListener(ev, () => { if (pressT) { clearTimeout(pressT); pressT = null; } }, { passive: true }));
+    log.addEventListener("click", e => {
+      const j = e.target.closest("[data-jump]");
+      if (j) { const t = document.getElementById("m" + j.dataset.jump); if (t) { t.scrollIntoView({ behavior: "smooth", block: "center" }); t.classList.add("flash"); setTimeout(() => t.classList.remove("flash"), 1200); } return; }
+      if (!S.selecting) return;
+      const m = msgOf(e.target); if (!m) return;
+      S.selected.has(m.id) ? S.selected.delete(m.id) : S.selected.add(m.id);
+      updateSel(); draw();
+    });
+    document.addEventListener("click", e => { if (!e.target.closest(".ctx")) closeMenu(); });
+    document.addEventListener("keydown", e => { if (e.key === "Escape") { closeMenu(); if (S.selecting) stopSel(); } });
+    log.addEventListener("scroll", closeMenu);
+    input.addEventListener("keydown", e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); document.getElementById("chatForm").requestSubmit(); } });
+    input.addEventListener("input", () => { input.style.height = ""; input.style.height = Math.min(140, input.scrollHeight) + "px"; });
+
+    await load(true);
+    chatTimer = setInterval(() => { if (!document.hidden) load(false); }, 4000);
+  }
+
+  // ----- make previews hard to copy: blur when the window loses focus or on PrintScreen -----
+  (() => {
+    let t = null;
+    const shield = ms => { document.body.classList.add("shielded"); clearTimeout(t); if (ms) t = setTimeout(() => document.body.classList.remove("shielded"), ms); };
+    const unshield = () => { clearTimeout(t); t = setTimeout(() => document.body.classList.remove("shielded"), 250); };
+    window.addEventListener("blur", () => shield(0));
+    window.addEventListener("focus", unshield);
+    document.addEventListener("visibilitychange", () => document.hidden ? shield(0) : unshield());
+    const isShot = e => e.key === "PrintScreen" || ((e.metaKey || e.ctrlKey) && e.shiftKey && /^[345s]$/i.test(e.key));
+    document.addEventListener("keydown", e => {
+      if (isShot(e)) shield(2500);
+      if ((e.ctrlKey || e.metaKey) && /^[ps]$/i.test(e.key) && document.querySelector(".guarded")) { e.preventDefault(); toast("Saving and printing previews is off."); }
+    });
+    document.addEventListener("keyup", e => {
+      if (e.key === "PrintScreen") { shield(2500); try { navigator.clipboard.writeText("Previews on freshhands are protected."); } catch (x) {} }
+    });
+    document.addEventListener("contextmenu", e => { if (e.target.closest(".guarded")) e.preventDefault(); });
+    document.addEventListener("dragstart", e => { if (e.target.closest(".guarded")) e.preventDefault(); });
+  })();
+
+  // Freelancer uploads finished work
+  function deliverDialog(S, done) {
+    let lastLink = ""; try { lastLink = localStorage.getItem("freshhands:paylink") || ""; } catch (e) {}
+    const m = modal(`
+      <h3>Upload finished work</h3>
+      <p>The client sees a preview with a watermark. The download unlocks only after you confirm the payment.</p>
+      <form class="form" id="delForm" style="margin-top:0">
+        <label>File <em class="opt">max 5 MB</em><input type="file" name="file" required></label>
+        <label>Price (€)<input name="price" type="number" min="0" max="9999" step="0.5" required inputmode="decimal"></label>
+        <label>Your payment link<input name="link" type="url" placeholder="https://paypal.me/yourname" value="${esc(lastLink)}"><small>PayPal.me, a Stripe payment link or similar. The client pays you directly.</small></label>
+        <p class="err" id="delErr"></p>
+        <div class="modal-actions"><button class="btn hot" type="submit">Upload</button><button class="btn ghost" type="button" data-close>Cancel</button></div>
+      </form>`);
+    m.querySelector("#delForm").addEventListener("submit", async e => {
+      e.preventDefault();
+      const f = e.target, file = f.file.files[0], err = m.querySelector("#delErr"), btn = f.querySelector("[type=submit]");
+      const price = Number(f.price.value), link = f.link.value.trim();
+      if (!file) { err.textContent = "Choose a file."; return; }
+      if (file.size > 5 * 1024 * 1024) { err.textContent = "File is too big. Max 5 MB. Try a zip or a smaller export."; return; }
+      if (!(price >= 0)) { err.textContent = "Enter a price."; return; }
+      if (link && !/^https:\/\//i.test(link)) { err.textContent = "Payment link must start with https://"; return; }
+      btn.disabled = true; btn.textContent = "Uploading…";
+      try {
+        const data = await new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(String(r.result).split(",")[1] || ""); r.onerror = rej; r.readAsDataURL(file); });
+        const preview = file.type.startsWith("image/") ? await watermark(file) : null;
+        await rpc("chat_deliver", { p_thread: S.id, p_token: S.token, p_name: file.name, p_mime: file.type, p_size: file.size, p_data: data, p_preview: preview, p_price: price, p_pay_link: link || null });
+        try { if (link) localStorage.setItem("freshhands:paylink", link); } catch (x) {}
+        m.remove(); toast("Uploaded"); done();
+      } catch (x) { btn.disabled = false; btn.textContent = "Upload"; err.textContent = errText(x); }
+    });
+  }
+
+  // Small preview with a strong watermark so it can't be used instead of the real file
+  async function watermark(file) {
+    try {
+      const img = await createImageBitmap(file);
+      const s = Math.min(1, 720 / Math.max(img.width, img.height));
+      const c = document.createElement("canvas"); c.width = Math.round(img.width * s); c.height = Math.round(img.height * s);
+      const x = c.getContext("2d"); x.drawImage(img, 0, 0, c.width, c.height);
+      x.save(); x.translate(c.width / 2, c.height / 2); x.rotate(-Math.PI / 6);
+      x.font = `600 ${Math.max(16, Math.round(c.width / 16))}px "Instrument Sans", sans-serif`; x.textAlign = "center";
+      const step = Math.max(40, Math.round(c.width / 7));
+      for (let yy = -c.height; yy < c.height; yy += step) for (let xx = -c.width; xx < c.width; xx += step * 4) {
+        x.fillStyle = "rgba(255,255,255,.5)"; x.fillText("freshhands preview", xx, yy);
+        x.fillStyle = "rgba(0,0,0,.25)"; x.fillText("freshhands preview", xx + 1, yy + 1);
+      }
+      x.restore();
+      return c.toDataURL("image/jpeg", 0.55);
+    } catch (e) { return null; }
+  }
+
+  // Client: what happens when you pay
+  function payDialog(S, d, done) {
+    if (!d || !d.pay_link) return;
+    const price = "€" + Number(d.price).toFixed(Number(d.price) % 1 ? 2 : 0);
+    let host = ""; try { host = new URL(d.pay_link).host; } catch (e) {}
+    const m = modal(`
+      <h3>Pay ${esc(S.info.freelancer)} ${price}</h3>
+      <ul class="paylist">
+        <li>You pay <b>${esc(S.info.freelancer)}</b> directly through their link (<b>${esc(host)}</b>). freshhands doesn't receive or hold your money.</li>
+        <li>After they confirm the payment, the <b>Download</b> button unlocks here.</li>
+        <li>Something wrong, or want a refund? Write to ${esc(S.info.freelancer)} in this chat first. If they don't answer, report their profile.</li>
+      </ul>
+      <label class="check" style="display:flex;gap:10px;align-items:flex-start;margin:4px 0 18px"><input type="checkbox" id="payOk" style="width:20px;height:20px;accent-color:var(--hot)"> I've checked the preview and want to pay.</label>
+      <div class="modal-actions"><button class="btn hot" id="payGo" disabled>Continue to payment</button><button class="btn ghost" data-close>Cancel</button></div>`);
+    const ok = m.querySelector("#payOk"), go = m.querySelector("#payGo");
+    ok.addEventListener("change", () => go.disabled = !ok.checked);
+    go.addEventListener("click", async () => {
+      window.open(d.pay_link, "_blank", "noopener");
+      m.remove();
+      try { await rpc("chat_pay_clicked", { p_thread: S.id, p_token: S.token, p_delivery: d.id }); } catch (e) {}
+      done();
+    });
+  }
+
+  async function inboxPage() {
+    app.innerHTML = `<section class="wrap page-h"><h1>My chats.</h1></section><section class="wrap" id="inbox"><p class="note">Loading…</p></section>`;
+    const box = document.getElementById("inbox");
+    let html = "";
+    const mine = getMine(), tok = getToken();
+    if (DB && mine && tok) {
+      try {
+        const list = await rpc("chat_inbox", { p_slug: mine, p_token: tok });
+        html += `<div class="sec-h"><h2>Clients writing to you</h2><span class="mono">${list.length}</span></div><div class="list">` +
+          (list.length ? list.map(t => `<a class="row inbox-row" href="#/chat/${t.id}"><span class="av" style="background:${color(t.id)}">${esc(initials(t.client_name))}</span>
+            <div class="t"><div class="n">${esc(t.client_name)}</div><div class="d">${esc(t.last || "")}</div></div><div class="p"><small>${fmtTime(t.updated_at)}</small></div></a>`).join("")
+          : `<div class="empty">No messages yet. Share your profile link to get clients.</div>`) + `</div>`;
+      } catch (e) { html += `<p class="note">Couldn't load your messages.</p>`; }
+    }
+    const mineAsClient = myThreads().filter(t => t.role === "client");
+    if (mineAsClient.length || !html) {
+      html += `<div class="sec-h"><h2>Freelancers you wrote to</h2><span class="mono">${mineAsClient.length}</span></div><div class="list">` +
+        (mineAsClient.length ? mineAsClient.map(t => `<a class="row inbox-row" href="#/chat/${t.id}"><span class="av" style="background:${color(t.slug)}">${esc(initials(t.with))}</span>
+          <div class="t"><div class="n">${esc(t.with)}</div><div class="d">Open chat</div></div><div class="p"><small>${t.at ? fmtTime(t.at) : ""}</small></div></a>`).join("")
+        : `<div class="empty">You haven't written to anyone yet. <a href="#/">Find a freelancer →</a></div>`) + `</div>`;
+    }
+    box.innerHTML = html;
+  }
+
+  // ---------- "signed in" on this device ----------
+  const MINE = "freshhands:my-profile";
+  const TOKEN = "freshhands:my-token";
+  function getMine() { try { return localStorage.getItem(MINE) || ""; } catch (e) { return ""; } }
+  function getToken() { try { return localStorage.getItem(TOKEN) || ""; } catch (e) { return ""; } }
+  function setMine(slug, token) {
+    try {
+      if (slug) { localStorage.setItem(MINE, slug); if (token) localStorage.setItem(TOKEN, token); }
+      else { localStorage.removeItem(MINE); localStorage.removeItem(TOKEN); }
+    } catch (e) {}
+    updateNav();
+  }
+  async function deleteMine() {
+    const slug = getMine(), token = getToken();
+    if (!DB || !slug || !token) return false;
+    const ok = await db("rpc/delete_my_profile", { method: "POST", body: JSON.stringify({ p_slug: slug, p_token: token }) });
+    if (ok !== true) return false;
+    setMine("");
+    await loadPeople();
+    return true;
+  }
+  function modal(html) {
+    const m = document.createElement("div");
+    m.className = "modal"; m.innerHTML = `<div class="modal-box" role="dialog" aria-modal="true">${html}</div>`;
+    m.addEventListener("click", e => { if (e.target === m || e.target.closest("[data-close]")) m.remove(); });
+    document.body.appendChild(m);
+    return m;
+  }
+  function logoutDialog() {
+    const canDelete = !!getToken() && DB;
+    const m = modal(canDelete ? `
+      <h3>Log out?</h3>
+      <p>Logging out deletes your profile from the site. This can't be undone.</p>
+      <div class="modal-actions">
+        <button class="btn danger" data-act="del">Log out and delete my profile</button>
+        <button class="btn ghost" data-close>Cancel</button>
+      </div>` : `
+      <h3>Log out?</h3>
+      <p>This profile was made before deleting was possible, so it can't be removed from here. Ask us by email to remove it.</p>
+      <div class="modal-actions">
+        <button class="btn" data-act="out">Log out</button>
+        <button class="btn ghost" data-close>Cancel</button>
+      </div>`);
+    m.addEventListener("click", async e => {
+      const b = e.target.closest("[data-act]"); if (!b) return;
+      if (b.dataset.act === "out") { setMine(""); m.remove(); toast("Logged out"); location.hash = "#/"; return; }
+      b.disabled = true; b.textContent = "Deleting…";
+      try {
+        if (await deleteMine()) { m.remove(); toast("Profile deleted"); location.hash = "#/"; route(); }
+        else { b.disabled = false; b.textContent = "Log out and delete my profile"; toast("Couldn't delete. Try again."); }
+      } catch (x) { b.disabled = false; b.textContent = "Log out and delete my profile"; toast("Couldn't delete. Try again."); }
+    });
+  }
+  function updateNav() {
+    const mine = getMine(), j = document.getElementById("navJoin"), o = document.getElementById("navOut");
+    if (mine) { j.textContent = "My profile"; j.href = "#/p/" + encodeURIComponent(mine); o.classList.remove("hidden"); }
+    else { j.textContent = "Join"; j.href = "#/plans"; o.classList.add("hidden"); }
+    document.getElementById("navMsg").classList.toggle("hidden", !(DB && (mine || myThreads().length)));
+  }
+  document.getElementById("navOut").addEventListener("click", logoutDialog);
+  updateNav();
+
+  function route() {
+    const h = location.hash.replace(/^#\/?/, "");
+    const [page, arg] = h.split("/");
+    if (chatTimer) { clearInterval(chatTimer); chatTimer = null; }
+    updateNav();
+    if (page === "chat" && arg) { chatPage(decodeURIComponent(arg), h.split("/")[2] || ""); window.scrollTo(0, 0); return; }
+    if (page === "inbox") { inboxPage(); window.scrollTo(0, 0); return; }
+    if (page === "me" && arg) { setMine(decodeURIComponent(arg)); location.replace("#/p/" + arg); return; }
+    if (page === "p" && arg) profile(decodeURIComponent(arg));
+    else if (page === "plans") plans();
+    else if (page === "apply") apply();
+    else if (page === "safety") safety();
+    else if (page === "terms") terms();
+    else home();
+    if (page !== "" || !route.first) window.scrollTo(0, 0);
+    route.first = true;
+  }
+  window.addEventListener("hashchange", route);
+  if (DB) {
+    app.innerHTML = `<section class="wrap page-h"><p>Loading…</p></section>`;
+    loadPeople().then(route);
+  } else route();
+})();
+</script>
+</body>
+</html>
