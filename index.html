@@ -427,6 +427,22 @@
   .langbtn:hover{border-color:var(--ink)}
   @media (max-width:760px){ header nav > .langbtn{margin-top:10px;padding:12px;font-size:15px} }
 
+  /* settings */
+  .navset{display:inline-flex;align-items:center;gap:6px}
+  @media (min-width:761px){ .navset span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)} }
+  .settings{display:grid;gap:14px;max-width:720px}
+  .set-block{border:1px solid var(--line-2);border-radius:10px;padding:20px;background:var(--paper)}
+  .set-block h2{font:400 28px/1.1 var(--serif);margin-bottom:10px}
+  .set-block > p{color:var(--muted)}
+  .set-block > p b{color:var(--ink)}
+  .set-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+  .set-label{margin:14px 0 8px;font-size:13px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+  .seg{display:flex;flex-wrap:wrap;border:1px solid var(--line-2);border-radius:8px;overflow:hidden;width:max-content;max-width:100%}
+  .seg button{border:0;background:transparent;color:var(--ink);font:500 14px/1 var(--sans);padding:11px 14px;cursor:pointer;border-right:1px solid var(--line-2)}
+  .seg button:last-child{border-right:0}
+  .seg button[aria-pressed=true]{background:var(--ink);color:var(--bg)}
+  .settings .form{margin-top:14px;max-width:none}
+
   .navout{border:0;background:transparent;cursor:pointer;font-weight:500;font-size:14px;color:var(--muted);padding:6px 0}
   .navout:hover{color:var(--ink)}
   .hidden{display:none !important}
@@ -457,6 +473,7 @@
       <a href="#/">Browse</a>
       <a href="#/plans">Plans</a>
       <a href="#/safety">Safety</a>
+      <a href="#/settings" class="navset" aria-label="Settings" title="Settings"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span>Settings</span></a>
       <a href="#/inbox" id="navMsg" class="btn ghost navchats hidden">My chats</a>
       <button class="navout hidden" id="navIn" type="button">Log in</button>
       <a class="btn" href="#/plans" id="navJoin">Join</a>
@@ -1164,6 +1181,126 @@
     });
   }
 
+  // ---------- Settings ----------
+  async function settingsPage() {
+    const a = getAuth(), mine = getMine(), tok = getToken();
+    let curTheme = "forest", curLang = "en";
+    try { curTheme = localStorage.getItem("freshhands:theme") || "forest"; curLang = localStorage.getItem("freshhands:lang") || "en"; } catch (e) {}
+    const THEMES = [["forest", "Forest"], ["ink", "Ink (dark)"], ["cobalt", "Cobalt"], ["clay", "Clay"]];
+    app.innerHTML = `
+      <section class="wrap page-h"><h1>Settings.</h1></section>
+      <section class="wrap settings">
+        <div class="set-block">
+          <h2>Account</h2>
+          ${a ? `<p>Signed in with Google as <b translate="no">${esc(a.email || a.name)}</b>.</p><div class="set-row"><button class="btn ghost" id="setOut" type="button">Log out</button></div>`
+              : `<p>You're not signed in. Log in so your profile and chats work on any device.</p><div class="set-row">${googleBtn()}</div>`}
+        </div>
+        <div class="set-block" id="setProfile">
+          <h2>My profile</h2>
+          ${DB && mine && tok ? `<p class="note">Loading…</p>` : `<p>You don't have a profile yet.</p><div class="set-row"><a class="btn hot" href="#/apply">Create a free profile</a></div>`}
+        </div>
+        <div class="set-block">
+          <h2>Appearance</h2>
+          <p class="set-label">Theme</p>
+          <div class="seg" id="setTheme">${THEMES.map(([id, n]) => `<button type="button" data-t="${id}" aria-pressed="${curTheme === id}">${n}</button>`).join("")}</div>
+          <p class="set-label">Language</p>
+          <div class="seg" id="setLang" translate="no"><button type="button" data-l="en" aria-pressed="${curLang === "en"}">English</button><button type="button" data-l="ru" aria-pressed="${curLang === "ru"}">Русский</button></div>
+        </div>
+        <div class="set-block">
+          <h2>Privacy</h2>
+          <p>Remove everything this site saved on this device: your login, chat links and settings. Your profile stays on the site.</p>
+          <div class="set-row"><button class="btn ghost" id="setClear" type="button">Clear data on this device</button></div>
+        </div>
+      </section>`;
+    const so = document.getElementById("setOut"); if (so) so.addEventListener("click", logoutDialog);
+    document.getElementById("setTheme").addEventListener("click", e => {
+      const b = e.target.closest("[data-t]"); if (!b) return;
+      const t = document.querySelector(`#themes [data-t="${b.dataset.t}"]`); if (t) t.click();
+      document.querySelectorAll("#setTheme button").forEach(x => x.setAttribute("aria-pressed", x === b));
+    });
+    document.getElementById("setLang").addEventListener("click", e => {
+      const b = e.target.closest("[data-l]"); if (!b || b.dataset.l === curLang) return;
+      try { localStorage.setItem("freshhands:lang", b.dataset.l); } catch (x) {}
+      location.reload();
+    });
+    document.getElementById("setClear").addEventListener("click", async () => {
+      if (!confirm("Clear all freshhands data on this device? You'll be logged out here.")) return;
+      if (getAuth()) await signOut();
+      try { Object.keys(localStorage).filter(k => k.startsWith("freshhands:")).forEach(k => localStorage.removeItem(k)); } catch (x) {}
+      location.hash = "#/"; location.reload();
+    });
+    if (DB && mine && tok) loadProfileEditor(mine, tok);
+  }
+
+  async function loadProfileEditor(slug, tok) {
+    const box = document.getElementById("setProfile");
+    let p;
+    try { p = await rpc("my_profile", { p_slug: slug, p_token: tok }); } catch (e) { p = null; }
+    if (!p) { box.innerHTML = `<h2>My profile</h2><p>Couldn't load your profile on this device.</p>`; return; }
+    const known = CATS.find(c => c[0] === p.category && c[0] !== "other");
+    const catText = known ? known[1] : (p.custom_category || "");
+    const c = p.contact || {};
+    const paid = p.plan !== "free", top = p.plan === "pro" || p.plan === "ultra";
+    box.innerHTML = `
+      <h2>My profile</h2>
+      <p class="note">Plan: <b>${esc(p.plan.toUpperCase())}</b>${p.hidden ? " · <b style='color:#b42318'>Hidden after reports</b>" : ""} · <a href="#/p/${encodeURIComponent(p.slug)}">View my profile</a></p>
+      <form class="form" id="editProf">
+        <label>Your name or nickname<input name="name" required maxlength="40" value="${esc(p.name)}"></label>
+        <label>What do you do?<input name="category" list="catList2" required maxlength="30" value="${esc(catText)}" autocomplete="off">
+          <datalist id="catList2">${CATS.filter(x => x[0] !== "other").map(([, n]) => `<option value="${n}"></option>`).join("")}</datalist></label>
+        <label>One line about your service<input name="title" required maxlength="70" value="${esc(p.title)}"></label>
+        <label>About you <em class="opt">optional</em><textarea name="about" rows="4" maxlength="400">${esc(p.about || "")}</textarea></label>
+        <label>Skills <em class="opt">optional</em><input name="skills" maxlength="160" value="${esc((p.skills || []).join(", "))}"><small>Separate with commas.</small></label>
+        <div class="two">
+          <label>Price from (€)<input name="priceFrom" type="number" min="1" max="999" required value="${esc(p.price_from)}"></label>
+          <label>You reply<select name="replyIn">${["within an hour", "same day", "in 1–2 days"].map(o => `<option${o === p.reply_in ? " selected" : ""}>${o}</option>`).join("")}</select></label>
+        </div>
+        <label>Languages <em class="opt">optional</em><input name="languages" maxlength="80" value="${esc((p.languages || []).join(", "))}"></label>
+        <label>Links to your work <em class="opt">optional</em><textarea name="portfolio" rows="3" maxlength="1200">${esc((p.portfolio || []).map(w => w.url).join("\n"))}</textarea><small>One link per line.</small></label>
+        <fieldset class="group">
+          <legend>How clients reach you <em class="req">fill at least one</em></legend>
+          <div class="two">
+            <label>Telegram<input name="telegram" maxlength="40" value="${esc(c.telegram || "")}"></label>
+            <label>Discord<input name="discord" maxlength="40" value="${esc(c.discord || "")}"></label>
+          </div>
+          <label>Instagram<input name="instagram" maxlength="40" value="${esc(c.instagram || "")}"></label>
+        </fieldset>
+        <label class="check"><input type="checkbox" name="available" ${p.available !== false ? "checked" : ""}> Show "Available for work"${top ? "" : " (shows on Pro and Ultra)"}</label>
+        ${paid ? `<label>Profile color<input type="color" name="color" value="${esc(p.color || "#1f5f4a")}" style="height:48px;padding:4px"></label>` : `<p class="note">Your own profile color comes with Basic. <a href="#/plans">See plans</a></p>`}
+        <p class="err" id="editErr"></p>
+        <div class="set-row"><button class="btn hot" type="submit">Save changes</button><button class="btn danger" type="button" id="setDel">Delete my profile</button></div>
+      </form>`;
+    const f = document.getElementById("editProf"), err = document.getElementById("editErr");
+    f.addEventListener("submit", async e => {
+      e.preventDefault();
+      const d = Object.fromEntries(new FormData(f).entries());
+      const list = s => String(s || "").split(",").map(x => x.trim()).filter(Boolean);
+      const ct = String(d.category || "").trim();
+      if (!d.name || !d.title || !d.priceFrom || ct.length < 2) { err.textContent = "Please fill in name, what you do, service and price."; return; }
+      if (!d.telegram && !d.discord && !d.instagram) { err.textContent = "Add at least one contact (Telegram, Discord or Instagram)."; return; }
+      if (!isClean(d.name, d.title, d.about, d.skills, d.languages, ct, d.telegram, d.discord, d.instagram)) { err.textContent = CLEAN_MSG; return; }
+      const k = CATS.find(([id, n]) => id !== "other" && (norm(n) === norm(ct) || id === norm(ct)));
+      const body = {
+        name: d.name.trim(), category: k ? k[0] : "other", custom_category: k ? "" : ct.slice(0, 30), title: d.title.trim(),
+        about: (d.about || "").trim(), skills: list(d.skills).slice(0, 15), languages: list(d.languages).slice(0, 8),
+        price_from: Math.min(999, Math.max(1, Math.round(Number(d.priceFrom)) || 1)), reply_in: d.replyIn,
+        portfolio: String(d.portfolio || "").split(/\s+/).filter(u => /^https?:\/\//i.test(u) && u.length < 300).slice(0, 12).map(u => ({ title: u.replace(/^https?:\/\/(www\.)?/, "").split("/")[0], url: u })),
+        contact: { telegram: (d.telegram || "").replace(/^@/, ""), discord: d.discord || "", instagram: (d.instagram || "").replace(/^@/, "") },
+        available: !!d.available, ...(paid ? { color: d.color || "" } : {}),
+      };
+      const btn = f.querySelector("[type=submit]"); btn.disabled = true; btn.textContent = "Saving…"; err.textContent = "";
+      try { await rpc("update_my_profile", { p_slug: slug, p_token: tok, p_in: body }); await loadPeople(); toast("Saved"); }
+      catch (x) { err.textContent = /keep it clean|category/i.test(String(x && x.message)) ? errText(x) : "Couldn't save. Check your answers and try again."; }
+      btn.disabled = false; btn.textContent = "Save changes";
+    });
+    document.getElementById("setDel").addEventListener("click", async e => {
+      if (!confirm("Delete your profile forever? This can't be undone.")) return;
+      e.target.disabled = true;
+      try { if (await deleteMine()) { toast("Profile deleted"); location.hash = "#/"; return; } } catch (x) {}
+      e.target.disabled = false; toast("Couldn't delete. Try again.");
+    });
+  }
+
   function safety() {
     app.innerHTML = `
       <section class="wrap page-h"><h1>Stay safe.</h1></section>
@@ -1792,6 +1929,7 @@
     updateNav();
     if (page === "chat" && arg) { chatPage(decodeURIComponent(arg), h.split("/")[2] || ""); window.scrollTo(0, 0); return; }
     if (page === "inbox") { inboxPage(); window.scrollTo(0, 0); return; }
+    if (page === "settings") { settingsPage(); window.scrollTo(0, 0); return; }
     if (page === "me" && arg) { setMine(decodeURIComponent(arg)); location.replace("#/p/" + arg); return; }
     if (page === "p" && arg) profile(decodeURIComponent(arg));
     else if (page === "plans") plans();
@@ -1905,6 +2043,17 @@
     "Did the money really arrive? After unlocking, the client can download the file.": "Деньги точно пришли? После открытия клиент сможет скачать файл.",
     "What's wrong with this profile? (scam, fake, rude…)": "Что не так с профилем? (мошенник, фейк, грубость…)", "Thanks. We'll take a look.": "Спасибо. Мы посмотрим.",
     "Not found.": "Не найдено.", "Back to everyone": "Назад ко всем",
+    "Settings": "Настройки", "Settings.": "Настройки.", "Account": "Аккаунт", "Appearance": "Оформление", "Language": "Язык",
+    "Signed in with Google as": "Ты вошёл через Google как", "You're not signed in. Log in so your profile and chats work on any device.": "Ты не вошёл. Войди, чтобы профиль и чаты работали на любом устройстве.",
+    "You don't have a profile yet.": "У тебя пока нет профиля.", "Plan:": "Тариф:", "View my profile": "Открыть мой профиль", "Hidden after reports": "Скрыт после жалоб",
+    "Save changes": "Сохранить", "Saving…": "Сохраняем…", "Saved": "Сохранено", "Profile color": "Цвет профиля",
+    "Show \"Available for work\"": "Показывать «Свободен для работы»", "Show \"Available for work\" (shows on Pro and Ultra)": "Показывать «Свободен для работы» (видно на Pro и Ultra)",
+    "Your own profile color comes with Basic.": "Свой цвет профиля доступен с Basic.", "See plans": "Смотреть тарифы",
+    "Remove everything this site saved on this device: your login, chat links and settings. Your profile stays on the site.": "Удалить всё, что сайт сохранил на этом устройстве: вход, ссылки на чаты и настройки. Профиль на сайте останется.",
+    "Clear data on this device": "Очистить данные на устройстве", "Clear all freshhands data on this device? You'll be logged out here.": "Очистить все данные freshhands на этом устройстве? Ты выйдешь из аккаунта здесь.",
+    "Couldn't load your profile on this device.": "Не получилось загрузить профиль на этом устройстве.",
+    "Please fill in name, what you do, service and price.": "Заполни имя, чем занимаешься, услугу и цену.", "Couldn't save. Check your answers and try again.": "Не получилось сохранить. Проверь ответы и попробуй снова.",
+    "Forest": "Лес", "Ink (dark)": "Чернила (тёмная)", "Cobalt": "Кобальт", "Clay": "Глина",
   };
   const RX = [
     [/^(\d+) found$/, m => `Найдено: ${m[1]}`], [/^(\d+) selected$/, m => `Выбрано: ${m[1]}`],
